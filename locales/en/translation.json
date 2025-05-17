@@ -1,0 +1,14 @@
+{
+  "userNotFound": "User not found",
+  "courseNotFound": "Course not found",
+  "invalidCredentials": "Invalid credentials",
+  "alreadyEnrolled": "Already enrolled",
+  "unauthorized": "Unauthorized",
+  "invalidToken": "Invalid token",
+  "allFieldsRequired": "All fields are required",
+  "userExists": "User already exists",
+  "onlyTeachers": "Only teachers can create courses",
+  "courseIdRequired": "Course ID is required",
+  "courseNotAvailable": "Course not available",
+  "onlyStudents": "Only students can enroll"
+}

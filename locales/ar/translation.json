@@ -1,0 +1,14 @@
+{
+  "userNotFound": "المستخدم غير موجود",
+  "courseNotFound": "الدورة غير موجودة",
+  "invalidCredentials": "بيانات الاعتماد غير صحيحة",
+  "alreadyEnrolled": "مسجل بالفعل",
+  "unauthorized": "غير مصرح",
+  "invalidToken": "رمز غير صالح",
+  "allFieldsRequired": "جميع الحقول مطلوبة",
+  "userExists": "المستخدم موجود بالفعل",
+  "onlyTeachers": "المعلمون فقط يمكنهم إنشاء الدورات",
+  "courseIdRequired": "معرف الدورة مطلوب",
+  "courseNotAvailable": "الدورة غير متاحة",
+  "onlyStudents": "الطلاب فقط يمكنهم التسجيل"
+}

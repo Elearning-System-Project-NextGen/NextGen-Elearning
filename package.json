@@ -1,0 +1,33 @@
+{
+  "name": "elearning-backend",
+  "version": "1.0.0",
+  "description": "Backend for e-learning system",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha tests/*.test.js --exit",
+    "seed": "node seeders/userSeeder.js && node seeders/subjectSeeder.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "i18next": "^23.16.8",
+    "i18next-fs-backend": "^2.6.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.0",
+    "socket.io": "^4.8.1",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "chai": "^4.5.0",
+    "chai-http": "^5.1.2",
+    "mocha": "^11.3.0",
+    "supertest": "^7.1.1",
+    "winston": "^3.15.0"
+  }
+}
