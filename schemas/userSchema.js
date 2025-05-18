@@ -1,12 +1,15 @@
-const Joi = require('joi');
-
-const userSchema = Joi.object({
-  full_name: Joi.string().min(2).required(),
-  username: Joi.string().min(3).required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-  role: Joi.string().valid('student', 'teacher', 'admin').required(),
-  language: Joi.string().valid('en', 'ar').optional()
+const mongoose = require('mongoose');
+const userSchema = new mongoose.Schema({
+  full_name: String,
+  username: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  phone_number: String,
+  role_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
+  registration_date: { type: Date, default: Date.now },
+  status: Number,
+  updated_date: { type: Date, default: Date.now },
+  language: String,
+  last_login: Date,
 });
-
-module.exports = userSchema;
+module.exports = mongoose.model('User', userSchema);
