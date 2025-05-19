@@ -1,49 +1,98 @@
 const express = require("express");
-const cors = require("cors");
-const rateLimit = require("express-rate-limit");
-const xss = require("xss");
-const cookieParser = require("cookie-parser");
-const http = require("http");
-const Database = require("./config/db");
-const SocketManager = require("./socket");
-const ErrorMiddleware = require("./middleware/error");
-const authRoutes = require("./routes/auth");
-const courseRoutes = require("./routes/courses");
-const enrollmentRoutes = require("./routes/enrollments");
-require("dotenv").config({
-  path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
-});
+const mongoose = require("mongoose");
+const i18next = require("i18next");
+const Backend = require("i18next-fs-backend");
+const i18nextMiddleware = require("i18next-http-middleware");
+const xssCleanMiddleware = require("./middleware/xssCleanMiddleware");
+const authRoutes = require("./routes/authRoutes");
+const courseRoutes = require("./routes/courseRoutes");
+const teacherRoutes = require("./routes/teacherRoutes");
+const studentRoutes = require("./routes/studentRoutes");
+const enrollmentRoutes = require("./routes/enrollmentRoutes");
+const sessionRoutes = require("./routes/sessionRoutes");
+const deviceRoutes = require("./routes/deviceRoutes");
+const roleRoutes = require("./routes/roleRoutes");
+const permissionRoutes = require("./routes/permissionRoutes");
+const rolePermissionRoutes = require("./routes/rolePermissionRoutes");
+const lessonRoutes = require("./routes/lessonRoutes");
+const quizRoutes = require("./routes/quizRoutes");
+const quizQuestionRoutes = require("./routes/quizQuestionRoutes");
+const studentQuizAttemptRoutes = require("./routes/studentQuizAttemptRoutes");
+const assignmentRoutes = require("./routes/assignmentRoutes");
+const submissionRoutes = require("./routes/submissionRoutes");
+const liveSessionRoutes = require("./routes/liveSessionRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
+const certificateRoutes = require("./routes/certificateRoutes");
+const studentProgressRoutes = require("./routes/studentProgressRoutes");
+const messageRoutes = require("./routes/messageRoutes");
+const addressRoutes = require("./routes/addressRoutes");
+const mediaRoutes = require("./routes/mediaRoutes");
+const blockedTokensRoutes = require("./routes/blockedTokensRoutes");
+require("dotenv").config();
 
 const app = express();
-const server = http.createServer(app);
 
-// Custom XSS sanitization middleware
-app.use((req, res, next) => {
-  if (req.body) {
-    for (const key in req.body) {
-      if (typeof req.body[key] === "string") {
-        req.body[key] = xss(req.body[key]);
-      }
-    }
-  }
-  next();
-});
+// تهيئة i18next للترجمة
+i18next
+  .use(Backend)
+  .use(i18nextMiddleware.LanguageDetector)
+  .init({
+    fallbackLng: "en",
+    backend: {
+      loadPath: "./locales/{{lng}}/translation.json",
+    },
+  });
 
-app.use(cors({ origin: "*" }));
-app.use(cookieParser());
+// Middlewares
+app.use(i18nextMiddleware.handle(i18next));
 app.use(express.json());
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use(xssCleanMiddleware);
 
-Database.connect();
-SocketManager.setup(server);
-
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/teachers", teacherRoutes);
+app.use("/api/students", studentRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/devices", deviceRoutes);
+app.use("/api/roles", roleRoutes);
+app.use("/api/permissions", permissionRoutes);
+app.use("/api/role-permissions", rolePermissionRoutes);
+app.use("/api/lessons", lessonRoutes);
+app.use("/api/quizzes", quizRoutes);
+app.use("/api/quiz-questions", quizQuestionRoutes);
+app.use("/api/student-quiz-attempts", studentQuizAttemptRoutes);
+app.use("/api/assignments", assignmentRoutes);
+app.use("/api/submissions", submissionRoutes);
+app.use("/api/live-sessions", liveSessionRoutes);
+app.use("/api/attendances", attendanceRoutes);
+app.use("/api/transactions", transactionRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/certificates", certificateRoutes);
+app.use("/api/student-progress", studentProgressRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/addresses", addressRoutes);
+app.use("/api/media", mediaRoutes);
+app.use("/api/blocked-tokens", blockedTokensRoutes);
 
-app.use(ErrorMiddleware.handle);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: req.t("server_error") });
+});
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Connect to MongoDB and start server
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected to MongoDB");
+    app.listen(process.env.PORT || 3000, () => {
+      console.log(`Server running on port ${process.env.PORT || 3000}`);
+    });
+  })
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 module.exports = app;

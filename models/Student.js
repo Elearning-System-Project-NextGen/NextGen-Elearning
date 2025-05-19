@@ -1,17 +1,10 @@
-const mongoose = require('mongoose');
-const StudentSchema = new mongoose.Schema({
-  grade_level: Number,
-  section: String,
-  birth_date: Date,
-  gender: Number,
-  stream: String,
-  guardian_name: String,
-  guardian_phone: Number,
-  enrollment_status: Number,
-  enrollment_year: Number,
-  address_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Address' },
-  profile_picture_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Media' },
-  is_verified: Boolean,
-  referral_code: String,
-});
-module.exports = mongoose.model('Student', StudentSchema);
+const StudentSchema = require("../schemas/studentSchema");
+const BaseModel = require("./BaseModel");
+
+class Student extends BaseModel {
+  constructor() {
+    super(StudentSchema);
+  }
+}
+
+module.exports = Student;

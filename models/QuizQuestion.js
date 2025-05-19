@@ -1,8 +1,10 @@
-const mongoose = require('mongoose');
-const QuizQuestionSchema = new mongoose.Schema({
-  quiz_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz' },
-  question_text: { en: String, ar: String },
-  options: Object,
-  correct_answer: { type: String, required: true },
-});
-module.exports = mongoose.model('QuizQuestion', QuizQuestionSchema);
+const QuizQuestionSchema = require("../schemas/quizQuestionSchema");
+const BaseModel = require("./BaseModel");
+
+class QuizQuestion extends BaseModel {
+  constructor() {
+    super(QuizQuestionSchema);
+  }
+}
+
+module.exports = QuizQuestion;

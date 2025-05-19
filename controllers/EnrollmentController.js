@@ -1,37 +1,130 @@
 const Enrollment = require("../models/Enrollment");
-const Course = require("../models/Course");
-const i18next = require("../config/i18n");
+const Joi = require("joi");
+const { t } = require("i18next");
+
+const enrollmentSchema = Joi.object({
+  student_id: Joi.string()
+    .hex()
+    .length(24)
+    .required()
+    .messages({
+      "string.empty": t("student_id_required"),
+    }),
+  course_id: Joi.string()
+    .hex()
+    .length(24)
+    .required()
+    .messages({
+      "string.empty": t("course_id_required"),
+    }),
+  enrollment_date: Joi.date().optional(),
+  status: Joi.number().integer().min(0).optional(),
+  overall_progress: Joi.number().min(0).max(100).optional(),
+  last_access: Joi.date().optional(),
+});
 
 class EnrollmentController {
-  static async enroll(req, res) {
-    const { course_id } = req.body;
-    if (!course_id) {
-      return res.status(400).json({ error: i18next.t("courseIdRequired") });
+  static async index(req, res) {
+    try {
+      const enrollmentModel = new Enrollment();
+      const enrollments = await enrollmentModel.getAll();
+      res.status(200).json(enrollments);
+    } catch (error) {
+      res.status(500).json({ error: t("server_error") });
     }
-    const course = await Course.findById(course_id);
-    if (!course) {
-      return res.status(404).json({ error: i18next.t("courseNotFound") });
+  }
+
+  static async view(req, res) {
+    try {
+      const enrollmentModel = new Enrollment();
+      const enrollment = await enrollmentModel.findOne(req.params.id);
+      if (!enrollment) {
+        return res.status(404).json({ error: t("enrollment_not_found") });
+      }
+      res.status(200).json(enrollment);
+    } catch (error) {
+      res.status(500).json({ error: t("server_error") });
     }
-    if (!course.is_published) {
-      return res.status(400).json({ error: i18next.t("courseNotAvailable") });
+  }
+
+  static async create(req, res) {
+    try {
+      const { error, value } = enrollmentSchema.validate(req.body, {
+        abortEarly: false,
+      });
+      if (error) {
+        const errors = error.details.map((err) => ({
+          field: err.path.join("."),
+          message: err.message,
+        }));
+        return res.status(400).json({ errors });
+      }
+
+      const enrollmentModel = new Enrollment();
+      const cleanedBody = {
+        ...value,
+        enrollment_date: value.enrollment_date || new Date(),
+      };
+
+      const enrollment = await enrollmentModel.create(cleanedBody);
+      res.status(201).json({ message: t("enrollment_created"), enrollment });
+    } catch (error) {
+      res.status(500).json({ error: t("server_error") });
     }
-    if (req.user.role !== "student") {
-      return res.status(403).json({ error: i18next.t("onlyStudents") });
+  }
+
+  static async update(req, res) {
+    try {
+      const { error, value } = enrollmentSchema.validate(req.body, {
+        abortEarly: false,
+      });
+      if (error) {
+        const errors = error.details.map((err) => ({
+          field: err.path.join("."),
+          message: err.message,
+        }));
+        return res.status(400).json({ errors });
+      }
+
+      const enrollmentModel = new Enrollment();
+      const cleanedBody = { ...value };
+
+      const enrollment = await enrollmentModel.update(
+        req.params.id,
+        cleanedBody
+      );
+      if (!enrollment) {
+        return res.status(404).json({ error: t("enrollment_not_found") });
+      }
+      res.status(200).json({ message: t("enrollment_updated"), enrollment });
+    } catch (error) {
+      res.status(500).json({ error: t("server_error") });
     }
-    const existingEnrollment = await Enrollment.findOne({
-      student_id: req.user.id,
-      course_id,
-    });
-    if (existingEnrollment) {
-      return res.status(400).json({ error: i18next.t("alreadyEnrolled") });
+  }
+
+  static async delete(req, res) {
+    try {
+      const enrollmentModel = new Enrollment();
+      const deletedEnrollment = await enrollmentModel.delete(req.params.id);
+      if (!deletedEnrollment) {
+        return res.status(404).json({ error: t("enrollment_not_found") });
+      }
+      res.status(200).json({ message: t("enrollment_deleted") });
+    } catch (error) {
+      res.status(500).json({ error: t("server_error") });
     }
-    const enrollment = new Enrollment({
-      student_id: req.user.id,
-      course_id,
-      enrollment_date: new Date(),
-    });
-    await enrollment.save();
-    res.status(201).json({ message: "Enrolled successfully" });
+  }
+
+  static async findByStudent(req, res) {
+    try {
+      const enrollmentModel = new Enrollment();
+      const enrollments = await enrollmentModel.findByStudent(
+        req.params.studentId
+      );
+      res.status(200).json(enrollments);
+    } catch (error) {
+      res.status(500).json({ error: t("server_error") });
+    }
   }
 }
 

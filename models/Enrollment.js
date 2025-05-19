@@ -1,10 +1,14 @@
-const mongoose = require("mongoose");
-const EnrollmentSchema = new mongoose.Schema({
-  student_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  course_id: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-  enrollment_date: Date,
-  status: Number,
-  overall_progress: Number,
-  last_access: Date,
-});
-module.exports = mongoose.model("Enrollment", EnrollmentSchema);
+const EnrollmentSchema = require("../schemas/enrollmentSchema");
+const BaseModel = require("./BaseModel");
+
+class Enrollment extends BaseModel {
+  constructor() {
+    super(EnrollmentSchema);
+  }
+
+  async findByStudent(studentId) {
+    return this.modelSchema.find({ student_id: studentId }).exec();
+  }
+}
+
+module.exports = Enrollment;

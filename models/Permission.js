@@ -1,5 +1,10 @@
-const mongoose = require('mongoose');
-const PermissionSchema = new mongoose.Schema({
-  permission_key: { type: String, required: true },
-});
-module.exports = mongoose.model('Permission', PermissionSchema);
+const PermissionSchema = require("../schemas/permissionSchema");
+const BaseModel = require("./BaseModel");
+
+class Permission extends BaseModel {
+  constructor() {
+    super(PermissionSchema);
+  }
+}
+
+module.exports = Permission;

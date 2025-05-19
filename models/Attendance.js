@@ -1,8 +1,10 @@
-const mongoose = require('mongoose');
-const AttendanceSchema = new mongoose.Schema({
-  live_session_id: { type: mongoose.Schema.Types.ObjectId, ref: 'LiveSession' },
-  student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  attended: { type: Boolean, default: false },
-  timestamp: { type: Date, default: Date.now },
-});
-module.exports = mongoose.model('Attendance', AttendanceSchema);
+const AttendanceSchema = require("../schemas/attendanceSchema");
+const BaseModel = require("./BaseModel");
+
+class Attendance extends BaseModel {
+  constructor() {
+    super(AttendanceSchema);
+  }
+}
+
+module.exports = Attendance;

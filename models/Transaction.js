@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
-const TransactionSchema = new mongoose.Schema({
-  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  course_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
-  amount: Number,
-  payment_method: String,
-  transaction_date: { type: Date, default: Date.now },
-  status: String,
-});
-module.exports = mongoose.model('Transaction', TransactionSchema);
+const TransactionSchema = require("../schemas/transactionSchema");
+const BaseModel = require("./BaseModel");
+
+class Transaction extends BaseModel {
+  constructor() {
+    super(TransactionSchema);
+  }
+}
+
+module.exports = Transaction;

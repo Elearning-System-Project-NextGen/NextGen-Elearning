@@ -1,20 +1,19 @@
-const jwt = require('jsonwebtoken');
-const i18next = require('../config/i18n');
+const jwt = require("jsonwebtoken");
+const { t } = require("i18next");
 
-class AuthMiddleware {
-  static authenticate(req, res, next) {
+const authMiddleware = async (req, res, next) => {
+  try {
     const token = req.cookies.token;
     if (!token) {
-      return res.status(401).json({ error: i18next.t('unauthorized') });
+      return res.status(401).json({ error: t("unauthorized") });
     }
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: i18next.t('invalidToken') });
-      }
-      req.user = decoded;
-      next();
-    });
-  }
-}
 
-module.exports = AuthMiddleware;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: t("invalid_token") });
+  }
+};
+
+module.exports = authMiddleware;
