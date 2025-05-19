@@ -9,6 +9,10 @@ class User extends BaseModel {
   async findByEmail(email) {
     return this.modelSchema.findOne({ email }).exec();
   }
+
+  async deleteMany(conditions = {}) {
+    return this.modelSchema.deleteMany(conditions).exec();
+  }
 }
 
 module.exports = User;
