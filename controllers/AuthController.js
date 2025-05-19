@@ -206,11 +206,7 @@ class AuthController {
         abortEarly: false,
       });
       if (error) {
-        const errors = error.details.map((err) => ({
-          field: err.path.join("."),
-          message: err.message,
-        }));
-        return res.status(400).json({ errors });
+        return res.status(400).json({ message: error.details[0].message });
       }
 
       const userModel = new User();
