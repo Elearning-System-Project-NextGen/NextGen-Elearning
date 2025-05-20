@@ -1,5 +1,8 @@
 const path = require("path");
+
 const User = require("../models/User");
+const Role = require("../models/Role");
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
@@ -75,15 +78,27 @@ class AuthController {
         return res.status(400).json({ message: t("invalid_credentials") });
       }
 
+      console.log("User.role_id", user.role_id.toString());
+
+      const roleModel = new Role();
+      const roleDoc = await roleModel.findOne(user.role_id);
+
+      console.log("============> ", roleDoc);
+
+      if (!roleDoc) {
+        return res.status(400).json({ message: t("role_not_found") });
+      }
+
       const token = jwt.sign(
         {
           email: user.email,
           id: user._id,
           username: user.username,
           name: user.full_name,
+          role: roleDoc.name,
         },
         process.env.JWT_SECRET,
-        { expiresIn: "2h" }
+        { expiresIn: "60d" }
       );
 
       await userModel.update(user._id, { last_login: new Date() });
@@ -132,6 +147,14 @@ class AuthController {
       res
         .status(201)
         .json({ message: t("user_registered_successfully"), user });
+    } catch (err) {
+      res.status(500).json({ error: t("server_error") });
+    }
+  }
+
+  static async logout(req, res) {
+    try {
+      res.status(200).json({ message: t("logout_successful") });
     } catch (err) {
       res.status(500).json({ error: t("server_error") });
     }

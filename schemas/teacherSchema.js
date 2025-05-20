@@ -6,5 +6,6 @@ const teacherSchema = new mongoose.Schema({
   rating_count: Number,
   video_intro_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Media' },
   social_links: Object,
-});
+},
+{ new: true });
 module.exports = mongoose.model('Teacher', teacherSchema);

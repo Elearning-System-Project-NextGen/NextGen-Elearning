@@ -8,17 +8,7 @@ router.get("/", authMiddleware, RoleController.index);
 router.get("/:id", authMiddleware, RoleController.view);
 router.get("/:id/name", authMiddleware, RoleController.name);
 router.post("/", authMiddleware, restrictTo("admin"), RoleController.create);
-router.patch(
-  "/:id",
-  authMiddleware,
-  restrictTo("admin"),
-  RoleController.update
-);
-router.delete(
-  "/:id",
-  authMiddleware,
-  restrictTo("admin"),
-  RoleController.delete
-);
+router.patch("/:id", authMiddleware, RoleController.update);
+router.delete("/:id", authMiddleware, RoleController.delete);
 
 module.exports = router;

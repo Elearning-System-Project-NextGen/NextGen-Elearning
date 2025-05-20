@@ -30,11 +30,19 @@ const messageRoutes = require("./routes/messageRoutes");
 const addressRoutes = require("./routes/addressRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const blockedTokensRoutes = require("./routes/blockedTokensRoutes");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
 
-// تهيئة i18next للترجمة
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
 i18next
   .use(Backend)
   .use(i18nextMiddleware.LanguageDetector)
@@ -48,6 +56,7 @@ i18next
 // Middlewares
 app.use(i18nextMiddleware.handle(i18next));
 app.use(express.json());
+app.use(cookieParser());
 app.use(xssCleanMiddleware);
 
 // Routes
