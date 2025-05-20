@@ -9,6 +9,7 @@ class Role extends BaseModel {
   async findByName(name) {
     return this.modelSchema.findOne({ name }).exec();
   }
+  
 }
 
 module.exports = Role;

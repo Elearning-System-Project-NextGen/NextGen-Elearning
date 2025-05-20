@@ -11,6 +11,7 @@ const permissionSchema = Joi.object({
 });
 
 class PermissionController {
+  
   static async index(req, res) {
     try {
       const permissionModel = new Permission();
