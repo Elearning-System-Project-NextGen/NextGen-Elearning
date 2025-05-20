@@ -93,7 +93,7 @@ class AuthController {
         role: roleDoc.name,  // <-- role name here
       },
       process.env.JWT_SECRET,
-      { expiresIn: "2h" }
+      { expiresIn: "2d" }
     );
 
     await userModel.update(user._id, { last_login: new Date() });

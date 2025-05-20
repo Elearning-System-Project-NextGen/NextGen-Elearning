@@ -30,6 +30,7 @@ const messageRoutes = require("./routes/messageRoutes");
 const addressRoutes = require("./routes/addressRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const blockedTokensRoutes = require("./routes/blockedTokensRoutes");
+const subjectRoutes = require("./routes/subjectRoutes");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 
@@ -71,7 +72,7 @@ app.use("/api/student-quiz-attempts", studentQuizAttemptRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/live-sessions", liveSessionRoutes);
-app.use("/api/attendances", attendanceRoutes);
+app.use("/api/attendance", attendanceRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/certificates", certificateRoutes);
@@ -80,6 +81,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/addresses", addressRoutes);
 app.use("/api/media", mediaRoutes);
 app.use("/api/blocked-tokens", blockedTokensRoutes);
+app.use("/api/subjects", subjectRoutes); 
 
 // Error handling middleware
 app.use((err, req, res, next) => {
