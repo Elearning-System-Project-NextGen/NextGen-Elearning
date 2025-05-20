@@ -1,5 +1,6 @@
 const path = require("path");
 const User = require("../models/User");
+const Role = require("../models/Role");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
@@ -75,27 +76,37 @@ class AuthController {
         return res.status(400).json({ message: t("invalid_credentials") });
       }
 
-      const token = jwt.sign(
-        {
-          email: user.email,
-          id: user._id,
-          username: user.username,
-          name: user.full_name,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: "2h" }
-      );
+      const roleModel = new Role();
+    const roleDoc = await roleModel.findOne(user.role_id);
 
-      await userModel.update(user._id, { last_login: new Date() });
+    if (!roleDoc) {
+      return res.status(400).json({ message: t("role_not_found") });
+    }
 
-      res.json({
-        token,
+    // sign JWT with role name, not role_id
+    const token = jwt.sign(
+      {
         email: user.email,
+        id: user._id,
         username: user.username,
         name: user.full_name,
-      });
-    } catch (err) {
-      res.status(500).json({ error: t("server_error") });
+        role: roleDoc.name,  // <-- role name here
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+
+    await userModel.update(user._id, { last_login: new Date() });
+
+    res.json({
+      token,
+      email: user.email,
+      username: user.username,
+      name: user.full_name,
+      role: roleDoc.name,  // <-- role name here
+    });
+  } catch (err) {
+    res.status(500).json({ error: t("server_error") });
     }
   }
 

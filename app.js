@@ -31,8 +31,11 @@ const addressRoutes = require("./routes/addressRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const blockedTokensRoutes = require("./routes/blockedTokensRoutes");
 require("dotenv").config();
+const cookieParser = require("cookie-parser");
+
 
 const app = express();
+app.use(cookieParser());
 
 // تهيئة i18next للترجمة
 i18next
