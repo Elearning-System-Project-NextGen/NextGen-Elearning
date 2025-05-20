@@ -58,6 +58,7 @@ const registerSchema = Joi.object({
 });
 
 class AuthController {
+  
   static async login(req, res) {
     try {
       const { error, value } = loginSchema.validate(req.body, {
@@ -78,7 +79,7 @@ class AuthController {
         return res.status(400).json({ message: t("invalid_credentials") });
       }
 
-      console.log("User.role_id", user.role_id.toString());
+      console.log("User.role_id", user.role_id);
 
       const roleModel = new Role();
       const roleDoc = await roleModel.findOne(user.role_id);
@@ -108,6 +109,10 @@ class AuthController {
         email: user.email,
         username: user.username,
         name: user.full_name,
+<<<<<<< Updated upstream
+=======
+        role: roleDoc.name, // <-- role name here
+>>>>>>> Stashed changes
       });
     } catch (err) {
       res.status(500).json({ error: t("server_error") });
