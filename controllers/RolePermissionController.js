@@ -1,4 +1,4 @@
-const RolePermission = require("../models/Role");
+const RolePermission = require("../models/RolePermission");
 const Joi = require("joi");
 const { t } = require("i18next");
 
@@ -48,6 +48,7 @@ class RolePermissionController {
       const { error, value } = rolePermissionSchema.validate(req.body, {
         abortEarly: false,
       });
+
       if (error) {
         const errors = error.details.map((err) => ({
           field: err.path.join("."),
@@ -60,6 +61,7 @@ class RolePermissionController {
       const cleanedBody = { ...value };
 
       const rolePermission = await rolePermissionModel.create(cleanedBody);
+
       res
         .status(201)
         .json({ message: t("role_permission_created"), rolePermission });
