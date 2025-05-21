@@ -7,12 +7,8 @@ router.get("/", authMiddleware, SubjectController.index);
 
 router.get("/:id", authMiddleware, SubjectController.view);
 
-router.post(
-  "/",
-  authMiddleware,
-  restrictTo("admin", "teacher"),
-  SubjectController.create
-);
+// smile
+router.post("/",authMiddleware,restrictTo("admin", "teacher"),SubjectController.create);
 
 router.patch(
   "/:id",

@@ -38,7 +38,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 app.use(cookieParser());
 
-// تهيئة i18next للترجمة
+
 i18next
   .use(Backend)
   .use(i18nextMiddleware.LanguageDetector)
