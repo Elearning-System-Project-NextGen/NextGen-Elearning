@@ -7,24 +7,25 @@ const attendanceSchema = Joi.object({
     .hex()
     .length(24)
     .required()
-    .messages({
-      "string.empty": t("student_id_required"),
-    }),
+    .messages({ "string.empty": t("student_id_required") }),
+
   live_session_id: Joi.string()
     .hex()
     .length(24)
     .required()
-    .messages({
-      "string.empty": t("live_session_id_required"),
-    }),
+    .messages({ "string.empty": t("live_session_id_required") }),
+
   status: Joi.number()
     .integer()
     .min(0)
     .required()
-    .messages({
-      "number.base": t("status_required"),
-    }),
+    .messages({ "number.base": t("status_required") }),
+
   attended_at: Joi.date().optional(),
+
+  attended: Joi.boolean().optional(),
+
+  timestamp: Joi.date().optional(),
 });
 
 class AttendanceController {

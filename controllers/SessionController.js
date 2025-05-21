@@ -17,6 +17,11 @@ const sessionSchema = Joi.object({
     .messages({
       "string.empty": t("device_id_required"),
     }),
+  token: Joi.string()
+    .required()
+    .messages({
+      "string.empty": t("token_required"),
+    }),
   login_time: Joi.date().optional(),
   logout_time: Joi.date().optional(),
 });

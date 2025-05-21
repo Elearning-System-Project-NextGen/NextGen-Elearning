@@ -7,21 +7,18 @@ const messageSchema = Joi.object({
     .hex()
     .length(24)
     .required()
-    .messages({
-      "string.empty": t("sender_id_required"),
-    }),
+    .messages({ "string.empty": t("sender_id_required") }),
+
   receiver_id: Joi.string()
     .hex()
     .length(24)
     .required()
-    .messages({
-      "string.empty": t("receiver_id_required"),
-    }),
+    .messages({ "string.empty": t("receiver_id_required") }),
+
   content: Joi.string()
     .required()
-    .messages({
-      "string.empty": t("content_required"),
-    }),
+    .messages({ "string.empty": t("content_required") }),
+
   sent_at: Joi.date().optional(),
   is_read: Joi.boolean().optional(),
 });

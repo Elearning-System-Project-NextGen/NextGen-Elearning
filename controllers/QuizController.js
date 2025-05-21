@@ -10,20 +10,64 @@ const quizSchema = Joi.object({
     .messages({
       "string.empty": t("course_id_required"),
     }),
+
   title: Joi.object({
     en: Joi.string()
       .required()
-      .messages({ "string.empty": t("title_en_required") }),
+      .messages({
+        "string.empty": t("title_en_required"),
+      }),
     ar: Joi.string()
       .required()
-      .messages({ "string.empty": t("title_ar_required") }),
+      .messages({
+        "string.empty": t("title_ar_required"),
+      }),
   }).required(),
+
   description: Joi.object({
-    en: Joi.string().allow(""),
-    ar: Joi.string().allow(""),
-  }),
-  time_limit: Joi.string().allow("").optional(),
-  passing_score: Joi.number().integer().min(0).optional(),
+    en: Joi.string()
+      .required()
+      .messages({
+        "string.empty": t("description_en_required"),
+      }),
+    ar: Joi.string()
+      .required()
+      .messages({
+        "string.empty": t("description_ar_required"),
+      }),
+  }).required(),
+
+  questions: Joi.array()
+    .items(
+      Joi.string()
+        .hex()
+        .length(24)
+        .messages({
+          "string.hex": t("invalid_question_id"),
+        })
+    )
+    .optional(),
+
+  total_score: Joi.number()
+    .integer()
+    .min(1)
+    .required()
+    .messages({
+      "number.base": t("total_score_required"),
+      "number.min": t("total_score_min"),
+    }),
+
+  duration: Joi.number()
+    .integer()
+    .min(1)
+    .optional()
+    .messages({
+      "number.min": t("duration_min"),
+    }),
+
+  is_published: Joi.boolean().optional(),
+
+  created_at: Joi.date().optional(),
 });
 
 class QuizController {

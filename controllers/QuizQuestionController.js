@@ -9,7 +9,9 @@ const quizQuestionSchema = Joi.object({
     .required()
     .messages({
       "string.empty": t("quiz_id_required"),
+      "string.length": t("invalid_quiz_id_format"),
     }),
+
   question_text: Joi.object({
     en: Joi.string()
       .required()
@@ -18,15 +20,39 @@ const quizQuestionSchema = Joi.object({
       .required()
       .messages({ "string.empty": t("question_text_ar_required") }),
   }).required(),
-  options: Joi.object()
+
+  options: Joi.array()
+    .items(
+      Joi.object({
+        text: Joi.object({
+          en: Joi.string()
+            .required()
+            .messages({ "string.empty": t("option_text_en_required") }),
+          ar: Joi.string()
+            .required()
+            .messages({ "string.empty": t("option_text_ar_required") }),
+        }).required(),
+        is_correct: Joi.boolean()
+          .required()
+          .messages({ "any.required": t("option_is_correct_required") }),
+      })
+    )
+    .min(1)
     .required()
     .messages({
-      "object.base": t("options_required"),
+      "array.base": t("options_must_be_array"),
+      "array.min": t("options_minimum_required"),
+      "any.required": t("options_required"),
     }),
-  correct_answer: Joi.string()
+
+  score: Joi.number()
+    .integer()
+    .min(1)
     .required()
     .messages({
-      "string.empty": t("correct_answer_required"),
+      "number.base": t("score_must_be_number"),
+      "number.min": t("score_minimum_1"),
+      "any.required": t("score_required"),
     }),
 });
 

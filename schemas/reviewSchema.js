@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
 const reviewSchema = new mongoose.Schema(
   {
-    reviewer_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    reviewee_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    student_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // بدل reviewer_id
     course_id: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-    rating: Number,
-    comment: String,
-    date: { type: Date, default: Date.now },
+    rating: { type: Number, required: true, min: 1, max: 5 },
+    comment: { type: String, default: "" },
+    created_at: { type: Date, default: Date.now }, // بدل date
   },
   { new: true }
 );

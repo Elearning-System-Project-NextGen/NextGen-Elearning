@@ -7,17 +7,30 @@ const studentProgressSchema = Joi.object({
     .hex()
     .length(24)
     .required()
-    .messages({
-      "string.empty": t("student_id_required"),
-    }),
+    .messages({ "string.empty": t("student_id_required") }),
+
   course_id: Joi.string()
     .hex()
     .length(24)
     .required()
-    .messages({
-      "string.empty": t("course_id_required"),
-    }),
-  lesson_id: Joi.string().hex().length(24).optional(),
+    .messages({ "string.empty": t("course_id_required") }),
+
+  enrollment_id: Joi.string()
+    .hex()
+    .length(24)
+    .required()
+    .messages({ "string.empty": t("enrollment_id_required") }),
+
+  lesson_id: Joi.string()
+    .hex()
+    .length(24)
+    .required()
+    .messages({ "string.empty": t("lesson_id_required") }),
+
+  completed: Joi.boolean().optional(),
+
+  completion_date: Joi.date().optional(),
+
   progress_percentage: Joi.number()
     .min(0)
     .max(100)
@@ -27,6 +40,7 @@ const studentProgressSchema = Joi.object({
       "number.min": t("progress_percentage_min"),
       "number.max": t("progress_percentage_max"),
     }),
+
   last_updated: Joi.date().optional(),
 });
 

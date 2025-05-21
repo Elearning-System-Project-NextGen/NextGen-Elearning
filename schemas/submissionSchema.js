@@ -6,6 +6,7 @@ const submissionSchema = new mongoose.Schema(
     submission_content: String,
     submission_date: { type: Date, default: Date.now },
     grade: Number,
+    feedback: { type: String, default: "" },
   },
   { new: true }
 );

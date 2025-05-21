@@ -9,6 +9,7 @@ const submissionSchema = Joi.object({
     .required()
     .messages({
       "string.empty": t("student_id_required"),
+      "string.length": t("invalid_student_id_format"),
     }),
   assignment_id: Joi.string()
     .hex()
@@ -16,9 +17,10 @@ const submissionSchema = Joi.object({
     .required()
     .messages({
       "string.empty": t("assignment_id_required"),
+      "string.length": t("invalid_assignment_id_format"),
     }),
   submission_date: Joi.date().optional(),
-  content: Joi.string().allow("").optional(),
+  submission_content: Joi.string().allow("").optional(),
   grade: Joi.number().min(0).optional(),
   feedback: Joi.string().allow("").optional(),
 });

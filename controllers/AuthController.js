@@ -95,18 +95,20 @@ class AuthController {
           id: user._id,
           username: user.username,
           name: user.full_name,
+          role: roleDoc.name,
         },
         process.env.JWT_SECRET,
         { expiresIn: "2h" }
       );
 
-    await userModel.update(user._id, { last_login: new Date() });
+      await userModel.update(user._id, { last_login: new Date() });
 
       res.json({
         token,
         email: user.email,
         username: user.username,
         name: user.full_name,
+        role: roleDoc.name,
       });
     } catch (err) {
       res.status(500).json({ error: t("server_error") });

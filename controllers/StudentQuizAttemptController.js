@@ -10,6 +10,7 @@ const studentQuizAttemptSchema = Joi.object({
     .messages({
       "string.empty": t("student_id_required"),
     }),
+
   quiz_id: Joi.string()
     .hex()
     .length(24)
@@ -17,6 +18,7 @@ const studentQuizAttemptSchema = Joi.object({
     .messages({
       "string.empty": t("quiz_id_required"),
     }),
+
   score: Joi.number()
     .min(0)
     .required()
@@ -24,8 +26,17 @@ const studentQuizAttemptSchema = Joi.object({
       "number.base": t("score_required"),
       "number.min": t("score_min"),
     }),
+
   attempt_date: Joi.date().optional(),
-  answers: Joi.array().items(Joi.object()).optional(),
+
+  answers: Joi.array()
+    .items(
+      Joi.object({
+        question_id: Joi.string().hex().length(24).required(),
+        selected_option: Joi.string().required(),
+      })
+    )
+    .optional(),
 });
 
 class StudentQuizAttemptController {
