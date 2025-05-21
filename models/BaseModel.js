@@ -37,6 +37,14 @@ class BaseModel {
   async whereMore(obj) {
     return this.modelSchema.find(obj).exec();
   }
+
+  async deleteMany(filter = {}) {
+    return await this.modelSchema.deleteMany(filter);
+  }
+
+  async insertMany(data) {
+    return await this.modelSchema.insertMany(data);
+  }
 }
 
 module.exports = BaseModel;

@@ -6,14 +6,15 @@
   "scripts": {
     "start": "node app.js",
     "test": "mocha tests/*.test.js --exit",
-    "seed": "node seeders/userSeeder.js && node seeders/subjectSeeder.js",
+    "seed": "node seeders/index.js",
     "dev": "nodemon app.js"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.8.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.5.0",
     "express": "^4.21.2",
     "express-rate-limit": "^7.4.0",
     "i18next": "^23.16.8",
