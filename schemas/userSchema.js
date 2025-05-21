@@ -21,17 +21,7 @@ const userSchema = new mongoose.Schema(
   {
     new: true,
   }
-  // {
-  //   toJSON: { virtuals: true },
-  //   toObject: { virtuals: true },
-  // }
+ 
 );
-
-// userSchema.virtual("role", {
-//   ref: "Role",
-//   localField: "role_id",
-//   foreignField: "_id",
-//   justOne: true,
-// });
 
 module.exports = mongoose.model("User", userSchema);

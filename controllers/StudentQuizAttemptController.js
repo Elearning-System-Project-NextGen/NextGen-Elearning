@@ -40,17 +40,23 @@ class StudentQuizAttemptController {
   }
 
   static async view(req, res) {
+    console.log("0");
     try {
+      console.log("1");
+
       const studentQuizAttemptModel = new StudentQuizAttempt();
       const studentQuizAttempt = await studentQuizAttemptModel.findOne(
         req.params.id
       );
+      console.log("2");
       if (!studentQuizAttempt) {
         return res
           .status(404)
           .json({ error: t("student_quiz_attempt_not_found") });
       }
+      console.log("3");
       res.status(200).json(studentQuizAttempt);
+      console.log("4");
     } catch (error) {
       res.status(500).json({ error: t("server_error") });
     }
@@ -78,12 +84,10 @@ class StudentQuizAttemptController {
       const studentQuizAttempt = await studentQuizAttemptModel.create(
         cleanedBody
       );
-      res
-        .status(201)
-        .json({
-          message: t("student_quiz_attempt_created"),
-          studentQuizAttempt,
-        });
+      res.status(201).json({
+        message: t("student_quiz_attempt_created"),
+        studentQuizAttempt,
+      });
     } catch (error) {
       res.status(500).json({ error: t("server_error") });
     }
@@ -114,12 +118,10 @@ class StudentQuizAttemptController {
           .status(404)
           .json({ error: t("student_quiz_attempt_not_found") });
       }
-      res
-        .status(200)
-        .json({
-          message: t("student_quiz_attempt_updated"),
-          studentQuizAttempt,
-        });
+      res.status(200).json({
+        message: t("student_quiz_attempt_updated"),
+        studentQuizAttempt,
+      });
     } catch (error) {
       res.status(500).json({ error: t("server_error") });
     }

@@ -6,11 +6,7 @@ const restrictTo = require("../middleware/roleMiddleware");
 
 router.get("/", authMiddleware, StudentQuizAttemptController.index);
 router.get("/:id", authMiddleware, StudentQuizAttemptController.view);
-router.get(
-  "/student/:studentId",
-  authMiddleware,
-  StudentQuizAttemptController.findByStudent
-);
+
 router.post(
   "/",
   authMiddleware,

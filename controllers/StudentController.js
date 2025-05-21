@@ -3,15 +3,40 @@ const Joi = require("joi");
 const { t } = require("i18next");
 
 const studentSchema = Joi.object({
-  user_id: Joi.string()
-    .hex()
-    .length(24)
-    .required()
-    .messages({
-      "string.empty": t("user_id_required"),
-    }),
   grade_level: Joi.number().integer().min(1).max(12).optional(),
-  parent_contact: Joi.string().allow("").optional(),
+  section: Joi.string().max(10).optional(),
+  birth_date: Joi.date().iso().optional(),
+  gender: Joi.number().valid(0, 1).optional(), // 0 = female, 1 = male
+  stream: Joi.string()
+    .valid("Science", "Literature", "Commercial", "Industrial")
+    .optional(),
+  guardian_name: Joi.string().max(100).optional(),
+  guardian_phone: Joi.string()
+    .pattern(/^[0-9]{10}$/)
+    .optional(),
+  enrollment_status: Joi.number().valid(0, 1).optional(), // 0 = inactive, 1 = active
+  enrollment_year: Joi.number()
+    .integer()
+    .min(2000)
+    .max(new Date().getFullYear() + 1)
+    .optional(),
+  address_id: Joi.string().hex().length(24).optional(),
+  profile_picture_id: Joi.string().hex().length(24).optional(),
+  is_verified: Joi.boolean().optional(),
+  referral_code: Joi.string().alphanum().max(20).optional(),
+
+  // embedded user info
+  full_name: Joi.string().max(100).optional(),
+  username: Joi.string().min(3).max(30).optional(),
+  email: Joi.string().email().optional(),
+  password: Joi.string().min(6).max(100).optional(),
+  phone_number: Joi.string()
+    .pattern(/^[0-9]{10}$/)
+    .optional(),
+  role_id: Joi.string().hex().length(24).optional(),
+  status: Joi.number().valid(0, 1).optional(),
+  language: Joi.string().valid("en", "ar").optional(),
+  last_login: Joi.date().iso().optional(),
 });
 
 class StudentController {
