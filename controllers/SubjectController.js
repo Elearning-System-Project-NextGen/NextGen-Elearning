@@ -63,7 +63,7 @@ class SubjectController {
   static async view(req, res) {
     try {
       const subjectModel = new Subject();
-      const subject = await subjectModel.findById(req.params.id);
+      const subject = await subjectModel.findOne(req.params.id);
       if (!subject) {
         return res.status(404).json({ error: t("subject_not_found") });
       }
