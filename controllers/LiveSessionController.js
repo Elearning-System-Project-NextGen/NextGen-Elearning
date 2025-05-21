@@ -9,33 +9,33 @@ const liveSessionSchema = Joi.object({
     .required()
     .messages({
       "string.empty": t("course_id_required"),
+      "string.length": t("invalid_course_id_format"),
     }),
-  title: Joi.object({
-    en: Joi.string()
-      .required()
-      .messages({ "string.empty": t("title_en_required") }),
-    ar: Joi.string()
-      .required()
-      .messages({ "string.empty": t("title_ar_required") }),
-  }).required(),
-  start_time: Joi.date()
+
+  schedule: Joi.date()
     .required()
     .messages({
-      "date.base": t("start_time_required"),
+      "date.base": t("schedule_required"),
     }),
-  end_time: Joi.date()
-    .greater(Joi.ref("start_time"))
-    .required()
-    .messages({
-      "date.base": t("end_time_required"),
-      "date.greater": t("end_time_after_start"),
-    }),
-  meeting_url: Joi.string()
+
+  streaming_url: Joi.string()
     .uri()
-    .required()
+    .optional()
     .messages({
-      "string.empty": t("meeting_url_required"),
-      "string.uri": t("invalid_url"),
+      "string.uri": t("invalid_streaming_url"),
+    }),
+
+  recording_url: Joi.string()
+    .uri()
+    .optional()
+    .messages({
+      "string.uri": t("invalid_recording_url"),
+    }),
+
+  attendance_required: Joi.boolean()
+    .optional()
+    .messages({
+      "boolean.base": t("attendance_required_must_be_boolean"),
     }),
 });
 
@@ -64,10 +64,14 @@ class LiveSessionController {
   }
 
   static async create(req, res) {
+    console.log("0");
+
     try {
       const { error, value } = liveSessionSchema.validate(req.body, {
         abortEarly: false,
       });
+      console.log("1");
+
       if (error) {
         const errors = error.details.map((err) => ({
           field: err.path.join("."),
@@ -75,12 +79,17 @@ class LiveSessionController {
         }));
         return res.status(400).json({ errors });
       }
+      console.log("2");
 
       const liveSessionModel = new LiveSession();
       const cleanedBody = { ...value };
+      console.log("3");
 
       const liveSession = await liveSessionModel.create(cleanedBody);
+      console.log("4");
+
       res.status(201).json({ message: t("live_session_created"), liveSession });
+      console.log("5");
     } catch (error) {
       res.status(500).json({ error: t("server_error") });
     }
