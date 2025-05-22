@@ -4,10 +4,21 @@ const { t } = require("i18next");
 
 const mediaSchema = Joi.object({
   url: Joi.string()
-    .uri()
     .required()
     .messages({
       "string.empty": t("url_required"),
+    }),
+  size: Joi.number().integer().min(0).optional(),
+  type: Joi.string().allow("").optional(),
+  duration: Joi.string().allow("").optional(),
+  model_id: Joi.string().hex().length(24).optional(),
+  model_type: Joi.string().allow("").optional(),
+});
+
+const mediaUpdateSchema = Joi.object({
+  url: Joi.string()
+    .uri()
+    .messages({
       "string.uri": t("invalid_url"),
     }),
   size: Joi.number().integer().min(0).optional(),
@@ -43,9 +54,32 @@ class MediaController {
 
   static async create(req, res) {
     try {
-      const { error, value } = mediaSchema.validate(req.body, {
+      if (!req.file) {
+        return res.status(400).json({ error: t("file_required") });
+      }
+
+      const dirPath = "uploads/";
+
+      // const fileUrl = req.file.originalname;
+      const fileUrl = req.file.filename;
+      console.log("===== MULTER FILE OBJECT =====");
+      console.log(req.file);
+      console.log("===== MULTER BODY =====");
+      console.log(req.body);
+
+      const bodyData = {
+        size: Number(req.body.size) || req.file.size,
+        type: req.file.mimetype,
+        duration: req.body.duration || "",
+        model_id: req.body.model_id,
+        model_type: req.body.model_type,
+        url: `${dirPath}${fileUrl}`,
+      };
+
+      const { error, value } = mediaSchema.validate(bodyData, {
         abortEarly: false,
       });
+
       if (error) {
         const errors = error.details.map((err) => ({
           field: err.path.join("."),
@@ -55,18 +89,18 @@ class MediaController {
       }
 
       const mediaModel = new Media();
-      const cleanedBody = { ...value };
+      const media = await mediaModel.create(value);
 
-      const media = await mediaModel.create(cleanedBody);
       res.status(201).json({ message: t("media_created"), media });
     } catch (error) {
+      console.error(error);
       res.status(500).json({ error: t("server_error") });
     }
   }
 
   static async update(req, res) {
     try {
-      const { error, value } = mediaSchema.validate(req.body, {
+      const { error, value } = mediaUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

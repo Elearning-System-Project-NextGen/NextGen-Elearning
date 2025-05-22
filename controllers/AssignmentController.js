@@ -25,6 +25,28 @@ const assignmentSchema = Joi.object({
   due_date: Joi.date().optional(),
 });
 
+const assignmentUpdateSchema = Joi.object({
+  course_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.empty": t("course_id_required"),
+    }),
+  title: Joi.object({
+    en: Joi.string().messages({
+      "string.empty": t("title_en_required"),
+    }),
+    ar: Joi.string().messages({
+      "string.empty": t("title_ar_required"),
+    }),
+  }),
+  description: Joi.object({
+    en: Joi.string().allow(""),
+    ar: Joi.string().allow(""),
+  }),
+  due_date: Joi.date().optional(),
+});
+
 class AssignmentController {
   static async index(req, res) {
     try {
@@ -74,7 +96,7 @@ class AssignmentController {
 
   static async update(req, res) {
     try {
-      const { error, value } = assignmentSchema.validate(req.body, {
+      const { error, value } = assignmentUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

@@ -27,6 +27,28 @@ const certificateSchema = Joi.object({
     }),
 });
 
+const certificateUpdateSchema = Joi.object({
+  student_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.empty": t("student_id_required"),
+    }),
+  course_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.empty": t("course_id_required"),
+    }),
+  issue_date: Joi.date().optional(),
+  certificate_url: Joi.string()
+    .uri()
+    .messages({
+      "string.empty": t("certificate_url_required"),
+      "string.uri": t("invalid_url"),
+    }),
+});
+
 class CertificateController {
   static async index(req, res) {
     try {
@@ -79,7 +101,7 @@ class CertificateController {
 
   static async update(req, res) {
     try {
-      const { error, value } = certificateSchema.validate(req.body, {
+      const { error, value } = certificateUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

@@ -41,6 +41,39 @@ const enrollmentSchema = Joi.object({
   last_access: Joi.date().optional(),
 });
 
+const enrollmentUpdateSchema = Joi.object({
+  student_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.length": t("invalid_student_id_format"),
+    }),
+  course_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.length": t("invalid_course_id_format"),
+    }),
+  enrollment_date: Joi.date(),
+  status: Joi.number()
+    .integer()
+    .min(0)
+    .messages({
+      "number.base": t("status_must_be_number"),
+      "number.integer": t("status_must_be_integer"),
+      "number.min": t("status_minimum_0"),
+    }),
+  overall_progress: Joi.number()
+    .min(0)
+    .max(100)
+    .messages({
+      "number.base": t("overall_progress_must_be_number"),
+      "number.min": t("overall_progress_min_0"),
+      "number.max": t("overall_progress_max_100"),
+    }),
+  last_access: Joi.date(),
+});
+
 class EnrollmentController {
   static async index(req, res) {
     try {
@@ -93,7 +126,7 @@ class EnrollmentController {
 
   static async update(req, res) {
     try {
-      const { error, value } = enrollmentSchema.validate(req.body, {
+      const { error, value } = enrollmentUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

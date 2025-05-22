@@ -70,6 +70,61 @@ const quizSchema = Joi.object({
   created_at: Joi.date().optional(),
 });
 
+const updateQuizSchema = Joi.object({
+  course_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.hex": t("invalid_course_id"),
+    }),
+
+  title: Joi.object({
+    en: Joi.string().messages({
+      "string.empty": t("title_en_required"),
+    }),
+    ar: Joi.string().messages({
+      "string.empty": t("title_ar_required"),
+    }),
+  }).optional(),
+
+  description: Joi.object({
+    en: Joi.string().messages({
+      "string.empty": t("description_en_required"),
+    }),
+    ar: Joi.string().messages({
+      "string.empty": t("description_ar_required"),
+    }),
+  }).optional(),
+
+  questions: Joi.array()
+    .items(
+      Joi.string()
+        .hex()
+        .length(24)
+        .messages({
+          "string.hex": t("invalid_question_id"),
+        })
+    )
+    .optional(),
+
+  total_score: Joi.number()
+    .integer()
+    .min(1)
+    .messages({
+      "number.min": t("total_score_min"),
+    }),
+
+  duration: Joi.number()
+    .integer()
+    .min(1)
+    .messages({
+      "number.min": t("duration_min"),
+    }),
+
+  is_published: Joi.boolean().optional(),
+  created_at: Joi.date().optional(),
+}).min(1);
+
 class QuizController {
   static async index(req, res) {
     try {
@@ -119,7 +174,7 @@ class QuizController {
 
   static async update(req, res) {
     try {
-      const { error, value } = quizSchema.validate(req.body, {
+      const { error, value } = updateQuizSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {
