@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const Student = require("../models/Student");
 const { faker } = require("@faker-js/faker");
+const { t } = require("i18next");
 
 const seedStudents = async (users) => {
   try {
     console.log("Seeding students...");
-
     const studentModel = new Student();
     await studentModel.deleteMany();
 

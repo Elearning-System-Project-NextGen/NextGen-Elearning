@@ -6,17 +6,18 @@ const { t } = require("i18next");
 const seedMessages = async (users) => {
   try {
     console.log("Seeding messages...");
-    await Message.deleteMany({});
+    const messageModel = new Message();
+    await messageModel.deleteMany({});
 
     const messages = Array.from({ length: 5 }, () => ({
-      sender_id: faker.random.arrayElement(users)._id,
-      receiver_id: faker.random.arrayElement(users)._id,
+      sender_id: faker.helpers.arrayElement(users)._id,
+      receiver_id: faker.helpers.arrayElement(users)._id,
       content: faker.lorem.sentence(),
-      sent_at: new Date(),
-      is_read: faker.random.boolean(),
+      sent_at: faker.date.recent(),
+      is_read: faker.datatype.boolean(),
     }));
 
-    const insertedMessages = await Message.insertMany(messages);
+    const insertedMessages = await messageModel.insertMany(messages);
     console.log(`Inserted ${insertedMessages.length} messages`);
     return insertedMessages;
   } catch (error) {

@@ -6,7 +6,8 @@ const { t } = require("i18next");
 const seedAssignments = async (courses) => {
   try {
     console.log("Seeding assignments...");
-    await Assignment.deleteMany({});
+    const assignmentModel = new Assignment();
+    await assignmentModel.deleteMany({});
 
     const assignments = courses.map((course, index) => ({
       course_id: course._id,
@@ -21,7 +22,7 @@ const seedAssignments = async (courses) => {
       due_date: faker.date.soon(15),
     }));
 
-    const insertedAssignments = await Assignment.insertMany(assignments);
+    const insertedAssignments = await assignmentModel.insertMany(assignments);
     console.log(`Inserted ${insertedAssignments.length} assignments`);
     return insertedAssignments;
   } catch (error) {

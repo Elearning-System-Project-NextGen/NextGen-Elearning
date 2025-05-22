@@ -21,6 +21,7 @@ const seedTransactions = require("./transaction.seeder");
 const seedMedia = require("./media.seeder");
 const seedAttendance = require("./attendance.seeder");
 const seedMessages = require("./message.seeder");
+const seedDevices = require("./device.seeder")
 const seedSessions = require("./session.seeder");
 const seedBlockedTokens = require("./blockedTokens.seeder");
 const seedRolePermissions = require("./rolePermission.seeder");
@@ -47,15 +48,12 @@ const seedAll = async () => {
     const users = await seedUsers(roles);
 
     // Populate roles after seeding users
-    const populatedUsers = await mongoose
-      .model("User")
-      .find()
-      .populate("role_id");
+    const populatedUsers = await mongoose.model("User").find().populate("role_id");
 
     const students = await seedStudents(populatedUsers);
 
-    const subjects = await seedSubjects(); // <--- initialize first
-    const teachers = await seedTeachers(users, subjects); // <--- then use it
+    const subjects = await seedSubjects(); 
+    const teachers = await seedTeachers(populatedUsers, subjects); 
     const addresses = await seedAddresses();
     const courses = await seedCourses(subjects, teachers);
     const lessons = await seedLessons(courses);
@@ -78,6 +76,7 @@ const seedAll = async () => {
     const media = await seedMedia();
     const attendance = await seedAttendance(students, liveSessions);
     const messages = await seedMessages(users);
+    const devices = await seedDevices(users);
     const sessions = await seedSessions(users, devices);
     const blockedTokens = await seedBlockedTokens();
     const rolePermissions = await seedRolePermissions(roles, permissions);

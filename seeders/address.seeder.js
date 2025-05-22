@@ -6,7 +6,8 @@ const { t } = require("i18next");
 const seedAddresses = async () => {
   try {
     console.log("Seeding addresses...");
-    await Address.deleteMany({});
+    const adressModel = new Address();
+    await adressModel.deleteMany({});
 
     const addresses = Array.from({ length: 5 }, () => ({
       country: faker.address.country(),
@@ -15,7 +16,7 @@ const seedAddresses = async () => {
       postal_code: faker.address.zipCode(),
     }));
 
-    const insertedAddresses = await Address.insertMany(addresses);
+    const insertedAddresses = await adressModel.insertMany(addresses);
     console.log(`Inserted ${insertedAddresses.length} addresses`);
     return insertedAddresses;
   } catch (error) {

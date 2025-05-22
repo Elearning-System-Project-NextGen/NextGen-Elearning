@@ -6,18 +6,19 @@ const { t } = require("i18next");
 const seedEnrollments = async (students, courses) => {
   try {
     console.log("Seeding enrollments...");
-    await Enrollment.deleteMany({});
+    const enrollmentModel = new Enrollment();
+    await enrollmentModel.deleteMany({});
 
     const enrollments = students.slice(0, 3).map((student) => ({
       student_id: student._id,
-      course_id: faker.random.arrayElement(courses)._id,
-      enrollment_date: new Date(),
+      course_id: faker.helpers.arrayElement(courses)._id,
+      enrollment_date: faker.date.recent(),
       status: 1,
-      overall_progress: faker.random.number({ min: 0, max: 50 }),
-      last_access: new Date(),
+      overall_progress: faker.number.int({ min: 0, max: 50 }),
+      last_access: faker.date.recent(),
     }));
 
-    const insertedEnrollments = await Enrollment.insertMany(enrollments);
+    const insertedEnrollments = await enrollmentModel.insertMany(enrollments);
     console.log(`Inserted ${insertedEnrollments.length} enrollments`);
     return insertedEnrollments;
   } catch (error) {

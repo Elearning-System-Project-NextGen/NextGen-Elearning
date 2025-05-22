@@ -7,7 +7,7 @@ const seedSubjects = async () => {
   try {
     console.log("Seeding subjects...");
     const subjectModel = new Subject()
-    await subjectModel.deleteMany({});
+    const subject = await subjectModel.deleteMany({});
 
     const subjects = [
       {
@@ -36,7 +36,7 @@ const seedSubjects = async () => {
       },
     ];
 
-    const insertedSubjects = await Subject.insertMany(subjectModel);
+    const insertedSubjects = await subjectModel.insertMany(subjects);
     console.log(`Inserted ${insertedSubjects.length} subjects`);
     return insertedSubjects;
   } catch (error) {

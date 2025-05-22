@@ -6,7 +6,8 @@ const { t } = require("i18next");
 const seedLessons = async (courses) => {
   try {
     console.log("Seeding lessons...");
-    await Lesson.deleteMany({});
+    const lessonModel = new Lesson();
+    await lessonModel.deleteMany({});
 
     const lessons = courses.flatMap((course, index) =>
       Array.from({ length: 3 }, (_, i) => ({
@@ -16,12 +17,12 @@ const seedLessons = async (courses) => {
           ar: `الدرس ${i + 1} لـ ${course.title.ar}`,
         },
         order: i + 1,
-        content_type: faker.random.arrayElement(["video", "text", "quiz"]),
-        duration: `${faker.random.number({ min: 10, max: 60 })} minutes`,
+        content_type: faker.helpers.arrayElement(["video", "text", "quiz"]),
+        duration: `${faker.number.int({ min: 10, max: 60 })} minutes`,
       }))
     );
 
-    const insertedLessons = await Lesson.insertMany(lessons);
+    const insertedLessons = await lessonModel.insertMany(lessons);
     console.log(`Inserted ${insertedLessons.length} lessons`);
     return insertedLessons;
   } catch (error) {

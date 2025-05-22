@@ -6,16 +6,18 @@ const { t } = require("i18next");
 const seedSessions = async (users, devices) => {
   try {
     console.log("Seeding sessions...");
-    await Session.deleteMany({});
+    const sessionModel = new Session();
+    await sessionModel.deleteMany({});
 
     const sessions = users.slice(0, 3).map((user) => ({
+      token: faker.string.uuid(), 
       user_id: user._id,
-      device_id: faker.random.arrayElement(devices)._id,
-      login_time: new Date(),
-      logout_time: faker.random.boolean() ? new Date() : null,
+      device_id: faker.helpers.arrayElement(devices)._id,
+      login_time: faker.date.recent(),
+      logout_time: faker.datatype.boolean() ? faker.date.recent() : null,
     }));
 
-    const insertedSessions = await Session.insertMany(sessions);
+    const insertedSessions = await sessionModel.insertMany(sessions);
     console.log(`Inserted ${insertedSessions.length} sessions`);
     return insertedSessions;
   } catch (error) {

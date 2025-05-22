@@ -29,16 +29,18 @@ const seedUsers = async (roles) => {
     });
 
     // Teacher user
-    users.push({
-      full_name: faker.name.fullName(),
-      username: "teacher1",
-      email: "teacher1@example.com",
-      password: await bcrypt.hash("password123", 10),
-      phone_number: faker.phone.number(),
-      role_id: teacherRole._id,
-      status: 1,
-      language: "en",
-    });
+    for (let i = 0; i < 5; i++){
+      users.push({
+        full_name: faker.name.fullName(),
+        username: `teacher${i + 1}`,
+        email: `teacher${i + 1}@example.com`,
+        password: await bcrypt.hash("password123", 10),
+        phone_number: faker.phone.number(),
+        role_id: teacherRole._id,
+        status: 1,
+        language: "en",
+      });
+    }
 
     // Student users
     for (let i = 0; i < 5; i++) {
@@ -54,7 +56,7 @@ const seedUsers = async (roles) => {
       });
     }
 
-    const insertedUsers = await userModel.insertMany(users); // ✅ instance method
+    const insertedUsers = await userModel.insertMany(users); 
     console.log(`Inserted ${insertedUsers.length} users`);
     return insertedUsers;
   } catch (error) {

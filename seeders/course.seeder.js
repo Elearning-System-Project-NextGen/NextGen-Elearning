@@ -6,7 +6,8 @@ const { t } = require("i18next");
 const seedCourses = async (subjects, teachers) => {
   try {
     console.log("Seeding courses...");
-    await Course.deleteMany({});
+    const courseModel = new Course();
+    await courseModel.deleteMany({});
 
     const courses = subjects.map((subject, index) => ({
       subject_id: subject._id,
@@ -26,7 +27,7 @@ const seedCourses = async (subjects, teachers) => {
       is_published: true,
     }));
 
-    const insertedCourses = await Course.insertMany(courses);
+    const insertedCourses = await courseModel.insertMany(courses);
     console.log(`Inserted ${insertedCourses.length} courses`);
     return insertedCourses;
   } catch (error) {

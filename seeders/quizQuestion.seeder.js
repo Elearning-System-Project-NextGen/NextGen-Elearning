@@ -6,34 +6,36 @@ const { t } = require("i18next");
 const seedQuizQuestions = async (quizzes) => {
   try {
     console.log("Seeding quiz questions...");
-    await QuizQuestion.deleteMany({});
+    const quizQuestionModel = new QuizQuestion();
+    await quizQuestionModel.deleteMany({});
 
     const quizQuestions = quizzes.flatMap((quiz) =>
-      Array.from({ length: 5 }, () => ({
-        quiz_id: quiz._id,
-        question_text: {
-          en: faker.lorem.sentence(),
-          ar: faker.lorem.sentence(),
-        },
-        options: {
-          en: [
-            faker.lorem.word(),
-            faker.lorem.word(),
-            faker.lorem.word(),
-            faker.lorem.word(),
-          ],
-          ar: [
-            faker.lorem.word(),
-            faker.lorem.word(),
-            faker.lorem.word(),
-            faker.lorem.word(),
-          ],
-        },
-        correct_answer: faker.random.arrayElement(["0", "1", "2", "3"]),
-      }))
+      Array.from({ length: 5 }, () => {
+        const correctIndex = faker.number.int({ min: 0, max: 3 });
+
+        const options = Array.from({ length: 4 }, (_, idx) => ({
+          text: {
+            en: faker.lorem.word(),
+            ar: faker.lorem.word(),
+          },
+          is_correct: idx === correctIndex,
+        }));
+
+        return {
+          quiz_id: quiz._id,
+          question_text: {
+            en: faker.lorem.sentence(),
+            ar: faker.lorem.sentence(),
+          },
+          options,
+          score: faker.number.int({ min: 1, max: 5 }),
+        };
+      })
     );
 
-    const insertedQuizQuestions = await QuizQuestion.insertMany(quizQuestions);
+    const insertedQuizQuestions = await quizQuestionModel.insertMany(
+      quizQuestions
+    );
     console.log(`Inserted ${insertedQuizQuestions.length} quiz questions`);
     return insertedQuizQuestions;
   } catch (error) {

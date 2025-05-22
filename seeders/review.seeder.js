@@ -6,17 +6,18 @@ const { t } = require("i18next");
 const seedReviews = async (students, courses) => {
   try {
     console.log("Seeding reviews...");
-    await Review.deleteMany({});
+    const reviewsModel = new Review();
+    await reviewsModel.deleteMany({});
 
     const reviews = students.slice(0, 3).map((student) => ({
       student_id: student._id,
-      course_id: faker.random.arrayElement(courses)._id,
-      rating: faker.random.number({ min: 1, max: 5 }),
+      course_id: faker.helpers.arrayElement(courses)._id,
+      rating: faker.number.int({ min: 1, max: 5 }),
       comment: faker.lorem.sentence(),
-      created_at: new Date(),
+      created_at: faker.date.recent(),
     }));
 
-    const insertedReviews = await Review.insertMany(reviews);
+    const insertedReviews = await reviewsModel.insertMany(reviews);
     console.log(`Inserted ${insertedReviews.length} reviews`);
     return insertedReviews;
   } catch (error) {

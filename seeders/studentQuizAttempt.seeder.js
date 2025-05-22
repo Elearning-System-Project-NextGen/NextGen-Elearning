@@ -6,20 +6,27 @@ const { t } = require("i18next");
 const seedStudentQuizAttempts = async (students, quizzes) => {
   try {
     console.log("Seeding student quiz attempts...");
-    await StudentQuizAttempt.deleteMany({});
+    const studentQuizAttemptModel = new StudentQuizAttempt();
+    await studentQuizAttemptModel.deleteMany({});
 
     const attempts = students.slice(0, 3).map((student) => ({
       student_id: student._id,
-      quiz_id: faker.random.arrayElement(quizzes)._id,
-      score: faker.random.number({ min: 0, max: 100 }),
-      attempt_date: new Date(),
+      quiz_id: faker.helpers.arrayElement(quizzes)._id,
+      score: faker.number.int({ min: 0, max: 100 }),
+      attempt_date: faker.date.recent(),
       answers: [
-        { question_id: faker.random.alphaNumeric(24), answer: "0" },
-        { question_id: faker.random.alphaNumeric(24), answer: "1" },
+        {
+          question_id: new mongoose.Types.ObjectId(),
+          selected_option: faker.helpers.arrayElement(["0", "1", "2", "3"]),
+        },
+        {
+          question_id: new mongoose.Types.ObjectId(),
+          selected_option: faker.helpers.arrayElement(["0", "1", "2", "3"]),
+        },
       ],
     }));
 
-    const insertedAttempts = await StudentQuizAttempt.insertMany(attempts);
+    const insertedAttempts = await studentQuizAttemptModel.insertMany(attempts);
     console.log(`Inserted ${insertedAttempts.length} student quiz attempts`);
     return insertedAttempts;
   } catch (error) {
