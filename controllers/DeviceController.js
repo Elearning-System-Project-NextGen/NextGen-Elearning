@@ -12,6 +12,14 @@ const deviceSchema = Joi.object({
   created_at: Joi.date().optional(),
 });
 
+const deviceUpdateSchema = Joi.object({
+  name: Joi.string().messages({
+    "string.empty": t("name_required"),
+  }),
+  bigid: Joi.number().integer(),
+  created_at: Joi.date(),
+});
+
 class DeviceController {
   static async index(req, res) {
     try {
@@ -77,7 +85,7 @@ class DeviceController {
 
   static async update(req, res) {
     try {
-      const { error, value } = deviceSchema.validate(req.body, {
+      const { error, value } = deviceUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

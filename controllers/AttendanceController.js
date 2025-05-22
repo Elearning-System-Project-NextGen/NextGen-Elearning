@@ -28,6 +28,29 @@ const attendanceSchema = Joi.object({
   timestamp: Joi.date().optional(),
 });
 
+const updateAttendanceSchema = Joi.object({
+  student_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({ "string.empty": t("student_id_required") }),
+
+  live_session_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({ "string.empty": t("live_session_id_required") }),
+
+  status: Joi.number()
+    .integer()
+    .min(0)
+    .messages({ "number.base": t("status_required") }),
+
+  attended_at: Joi.date(),
+
+  attended: Joi.boolean(),
+
+  timestamp: Joi.date(),
+}).min(1);
+
 class AttendanceController {
   static async index(req, res) {
     try {
@@ -80,7 +103,7 @@ class AttendanceController {
 
   static async update(req, res) {
     try {
-      const { error, value } = attendanceSchema.validate(req.body, {
+      const { error, value } = updateAttendanceSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

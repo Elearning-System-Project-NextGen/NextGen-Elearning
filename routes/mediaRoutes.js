@@ -3,6 +3,7 @@ const router = express.Router();
 const MediaController = require("../controllers/MediaController");
 const authMiddleware = require("../middleware/auth");
 const restrictTo = require("../middleware/roleMiddleware");
+const upload = require("../middleware/uploads");
 
 router.get("/", authMiddleware, MediaController.index);
 router.get("/:id", authMiddleware, MediaController.view);
@@ -10,6 +11,15 @@ router.post(
   "/",
   authMiddleware,
   restrictTo("admin", "teacher"),
+  (req, res, next) => {
+    upload.single("image")(req, res, (err) => {
+      if (err) {
+        console.error("MULTER ERROR:", err);
+        return res.status(400).json({ error: err.message });
+      }
+      next();
+    });
+  },
   MediaController.create
 );
 router.patch(

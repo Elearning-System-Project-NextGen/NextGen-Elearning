@@ -39,6 +39,31 @@ const liveSessionSchema = Joi.object({
     }),
 });
 
+const liveSessionUpdateSchema = Joi.object({
+  course_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.length": t("invalid_course_id_format"),
+    }),
+  schedule: Joi.date().messages({
+    "date.base": t("schedule_required"),
+  }),
+  streaming_url: Joi.string()
+    .uri()
+    .messages({
+      "string.uri": t("invalid_streaming_url"),
+    }),
+  recording_url: Joi.string()
+    .uri()
+    .messages({
+      "string.uri": t("invalid_recording_url"),
+    }),
+  attendance_required: Joi.boolean().messages({
+    "boolean.base": t("attendance_required_must_be_boolean"),
+  }),
+});
+
 class LiveSessionController {
   static async index(req, res) {
     try {
@@ -97,7 +122,7 @@ class LiveSessionController {
 
   static async update(req, res) {
     try {
-      const { error, value } = liveSessionSchema.validate(req.body, {
+      const { error, value } = liveSessionUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

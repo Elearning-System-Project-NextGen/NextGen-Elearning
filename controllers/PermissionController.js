@@ -10,8 +10,11 @@ const permissionSchema = Joi.object({
     }),
 });
 
+const permissionUpdateSchema = Joi.object({
+  permission_key: Joi.string(),
+});
+
 class PermissionController {
-  
   static async index(req, res) {
     try {
       const permissionModel = new Permission();
@@ -60,7 +63,7 @@ class PermissionController {
 
   static async update(req, res) {
     try {
-      const { error, value } = permissionSchema.validate(req.body, {
+      const { error, value } = permissionUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {
