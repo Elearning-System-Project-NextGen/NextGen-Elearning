@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const i18next = require("i18next");
 const Backend = require("i18next-fs-backend");
 const i18nextMiddleware = require("i18next-http-middleware");
-const xssCleanMiddleware = require("./middleware/xssCleanMiddleware");
 const authRoutes = require("./routes/authRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
@@ -31,13 +30,12 @@ const addressRoutes = require("./routes/addressRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const blockedTokensRoutes = require("./routes/blockedTokensRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
+const sanitizeHtml = require("sanitize-html");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 
-
 const app = express();
 app.use(cookieParser());
-
 
 i18next
   .use(Backend)
@@ -48,6 +46,27 @@ i18next
       loadPath: "./locales/{{lng}}/translation.json",
     },
   });
+
+const sanitizeObject = (obj) => {
+  if (typeof obj !== "object" || obj === null) {
+    return typeof obj === "string"
+      ? sanitizeHtml(obj, { allowedTags: ["img"] })
+      : obj;
+  }
+
+  const sanitized = Array.isArray(obj) ? [] : {};
+  for (const [key, value] of Object.entries(obj)) {
+    sanitized[key] = sanitizeObject(value);
+  }
+  return sanitized;
+};
+
+const xssCleanMiddleware = (req, res, next) => {
+  if (req.body && typeof req.body === "object") {
+    req.body = sanitizeObject(req.body);
+  }
+  next();
+};
 
 // Middlewares
 app.use(i18nextMiddleware.handle(i18next));
@@ -81,7 +100,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/addresses", addressRoutes);
 app.use("/api/media", mediaRoutes);
 app.use("/api/blocked-tokens", blockedTokensRoutes);
-app.use("/api/subjects", subjectRoutes); 
+app.use("/api/subjects", subjectRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

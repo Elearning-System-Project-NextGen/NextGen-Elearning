@@ -30,6 +30,28 @@ const lessonSchema = Joi.object({
   duration: Joi.string().allow("").optional(),
 });
 
+const lessonUpdateSchema = Joi.object({
+  course_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.length": t("invalid_course_id_format"),
+    }),
+  title: Joi.object({
+    en: Joi.string().messages({ "string.empty": t("title_en_required") }),
+    ar: Joi.string().messages({ "string.empty": t("title_ar_required") }),
+  }),
+  order: Joi.number()
+    .integer()
+    .min(1)
+    .messages({
+      "number.base": t("order_required"),
+    }),
+  content_type: Joi.string().allow("").optional(),
+  media_id: Joi.string().hex().length(24).optional(),
+  duration: Joi.string().allow("").optional(),
+});
+
 class LessonController {
   static async index(req, res) {
     try {
@@ -79,7 +101,7 @@ class LessonController {
 
   static async update(req, res) {
     try {
-      const { error, value } = lessonSchema.validate(req.body, {
+      const { error, value } = lessonUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

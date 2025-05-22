@@ -37,6 +37,35 @@ const courseSchema = Joi.object({
   cover_image_id: Joi.string().hex().length(24),
 });
 
+const courseUpdateSchema = Joi.object({
+  subject_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.empty": t("subject_id_required"),
+    }),
+  teacher_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({
+      "string.empty": t("teacher_id_required"),
+    }),
+  title: Joi.object({
+    en: Joi.string().messages({ "string.empty": t("title_en_required") }),
+    ar: Joi.string().messages({ "string.empty": t("title_ar_required") }),
+  }),
+  description: Joi.object({
+    en: Joi.string().allow(""),
+    ar: Joi.string().allow(""),
+  }),
+  grade_level: Joi.number().integer().min(1).max(12),
+  start_date: Joi.date(),
+  end_date: Joi.date().greater(Joi.ref("start_date")),
+  is_free: Joi.boolean(),
+  is_published: Joi.boolean(),
+  cover_image_id: Joi.string().hex().length(24),
+});
+
 class CourseController {
   static async index(req, res) {
     try {
@@ -86,7 +115,7 @@ class CourseController {
 
   static async update(req, res) {
     try {
-      const { error, value } = courseSchema.validate(req.body, {
+      const { error, value } = courseUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

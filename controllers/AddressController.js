@@ -17,6 +17,13 @@ const addressSchema = Joi.object({
   postal_code: Joi.string().allow("").optional(),
 });
 
+const addressUpdateSchema = Joi.object({
+  country: Joi.string(),
+  city: Joi.string(),
+  street: Joi.string().allow("").optional(),
+  postal_code: Joi.string().allow("").optional(),
+}).min(1);
+
 class AddressController {
   static async index(req, res) {
     try {
@@ -66,7 +73,7 @@ class AddressController {
 
   static async update(req, res) {
     try {
-      const { error, value } = addressSchema.validate(req.body, {
+      const { error, value } = addressUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {

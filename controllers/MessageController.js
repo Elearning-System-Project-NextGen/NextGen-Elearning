@@ -23,6 +23,20 @@ const messageSchema = Joi.object({
   is_read: Joi.boolean().optional(),
 });
 
+const messageUpdateSchema = Joi.object({
+  sender_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({ "string.length": t("invalid_sender_id_format") }),
+  receiver_id: Joi.string()
+    .hex()
+    .length(24)
+    .messages({ "string.length": t("invalid_receiver_id_format") }),
+  content: Joi.string().messages({ "string.empty": t("content_required") }),
+  sent_at: Joi.date().optional(),
+  is_read: Joi.boolean().optional(),
+});
+
 class MessageController {
   static async index(req, res) {
     try {
@@ -72,7 +86,7 @@ class MessageController {
 
   static async update(req, res) {
     try {
-      const { error, value } = messageSchema.validate(req.body, {
+      const { error, value } = messageUpdateSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {
