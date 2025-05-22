@@ -80,6 +80,7 @@ class MediaController {
 
   static async update(req, res) {
     try {
+<<<<<<< Updated upstream
       const mediaModel = new Media();
 
       const oldMedia = await mediaModel.findOne(req.params.id);
@@ -87,6 +88,8 @@ class MediaController {
         return res.status(404).json({ error: t("media_not_found") });
       }
 
+=======
+>>>>>>> Stashed changes
       if (!req.file) {
         return res.status(400).json({ error: t("file_required") });
       }
@@ -103,7 +106,11 @@ class MediaController {
         url: `${dirPath}${fileUrl}`,
       };
 
+<<<<<<< Updated upstream
       const { error, value } = mediaSchema.validate(bodyData, {
+=======
+      const { error, value } = mediaUpdateSchema.validate(bodyData, {
+>>>>>>> Stashed changes
         abortEarly: false,
       });
 
@@ -115,6 +122,7 @@ class MediaController {
         return res.status(400).json({ errors });
       }
 
+<<<<<<< Updated upstream
       if (oldMedia.url) {
         const oldFilePath = path.join(__dirname, "..", oldMedia.url);
         fs.unlink(oldFilePath, (err) => {
@@ -127,6 +135,57 @@ class MediaController {
       res
         .status(200)
         .json({ message: t("media_updated"), media: updatedMedia });
+=======
+      const mediaModel = new Media();
+
+      // احصل على السجل القديم عشان تحذف ملفه بعد التحديث
+      const oldMedia = await mediaModel.findOne(req.params.id);
+      if (!oldMedia) {
+        return res.status(404).json({ error: t("media_not_found") });
+      }
+
+      const updatedMedia = await mediaModel.update(req.params.id, value);
+
+      // حذف الملف القديم
+      const fs = require("fs");
+      fs.unlink(oldMedia.url, (err) => {
+        if (err) {
+          console.warn("⚠️ Failed to delete file from server:", err.message);
+        } else {
+          console.log("🗑️ File deleted:", oldMedia.url);
+        }
+      });
+
+      res
+        .status(200)
+        .json({ message: t("media_updated"), media: updatedMedia });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: t("server_error") });
+    }
+  }
+
+  static async delete(req, res) {
+    try {
+      const mediaModel = new Media();
+      const media = await mediaModel.findOne(req.params.id);
+      if (!media) {
+        return res.status(404).json({ error: t("media_not_found") });
+      }
+
+
+      const fs = require("fs");
+      fs.unlink(media.url, (err) => {
+        if (err) {
+          console.warn("⚠️ Failed to delete file from server:", err.message);
+        } else {
+          console.log("🗑️ File deleted:", media.url);
+        }
+      });
+
+      const deletedMedia = await mediaModel.delete(req.params.id);
+      res.status(200).json({ message: t("media_deleted") });
+>>>>>>> Stashed changes
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: t("server_error") });
