@@ -6,7 +6,7 @@ const Role = require("../models/Role");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
-const i18n = require(path.join(__dirname, "../config/i18n")); // مسار جديد
+const i18n = require(path.join(__dirname, "../config/i18n")); 
 const t = i18n.t.bind(i18n);
 require("dotenv").config();
 
