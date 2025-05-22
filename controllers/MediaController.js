@@ -1,6 +1,8 @@
 const Media = require("../models/Media");
 const Joi = require("joi");
 const { t } = require("i18next");
+const path = require("path");
+const fs = require("fs");
 
 const mediaSchema = Joi.object({
   url: Joi.string()
@@ -59,13 +61,7 @@ class MediaController {
       }
 
       const dirPath = "uploads/";
-
-      // const fileUrl = req.file.originalname;
       const fileUrl = req.file.filename;
-      console.log("===== MULTER FILE OBJECT =====");
-      console.log(req.file);
-      console.log("===== MULTER BODY =====");
-      console.log(req.body);
 
       const bodyData = {
         size: Number(req.body.size) || req.file.size,
@@ -100,9 +96,33 @@ class MediaController {
 
   static async update(req, res) {
     try {
-      const { error, value } = mediaUpdateSchema.validate(req.body, {
+      const mediaModel = new Media();
+
+      const oldMedia = await mediaModel.findOne(req.params.id);
+      if (!oldMedia) {
+        return res.status(404).json({ error: t("media_not_found") });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ error: t("file_required") });
+      }
+
+      const dirPath = "uploads/";
+      const fileUrl = req.file.filename;
+
+      const bodyData = {
+        size: Number(req.body.size) || req.file.size,
+        type: req.file.mimetype,
+        duration: req.body.duration || "",
+        model_id: req.body.model_id,
+        model_type: req.body.model_type,
+        url: `${dirPath}${fileUrl}`,
+      };
+
+      const { error, value } = mediaSchema.validate(bodyData, {
         abortEarly: false,
       });
+
       if (error) {
         const errors = error.details.map((err) => ({
           field: err.path.join("."),
@@ -111,15 +131,20 @@ class MediaController {
         return res.status(400).json({ errors });
       }
 
-      const mediaModel = new Media();
-      const cleanedBody = { ...value };
-
-      const media = await mediaModel.update(req.params.id, cleanedBody);
-      if (!media) {
-        return res.status(404).json({ error: t("media_not_found") });
+      if (oldMedia.url) {
+        const oldFilePath = path.join(__dirname, "..", oldMedia.url);
+        fs.unlink(oldFilePath, (err) => {
+          if (err) console.warn("⚠️ لم يتم حذف الملف القديم:", err.message);
+        });
       }
-      res.status(200).json({ message: t("media_updated"), media });
+
+      const updatedMedia = await mediaModel.update(req.params.id, value);
+
+      res
+        .status(200)
+        .json({ message: t("media_updated"), media: updatedMedia });
     } catch (error) {
+      console.error(error);
       res.status(500).json({ error: t("server_error") });
     }
   }
@@ -127,12 +152,27 @@ class MediaController {
   static async delete(req, res) {
     try {
       const mediaModel = new Media();
-      const deletedMedia = await mediaModel.delete(req.params.id);
-      if (!deletedMedia) {
+      const media = await mediaModel.findOne(req.params.id);
+
+      if (!media) {
         return res.status(404).json({ error: t("media_not_found") });
       }
+
+      const filePath = path.resolve("uploads", path.basename(media.url));
+
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.warn("Failed to delete file from server:", err.message);
+        } else {
+          console.log("File deleted:", media.url);
+        }
+      });
+
+      await mediaModel.delete(req.params.id);
+
       res.status(200).json({ message: t("media_deleted") });
     } catch (error) {
+      console.error("🔥 خطأ في حذف media:", error);
       res.status(500).json({ error: t("server_error") });
     }
   }

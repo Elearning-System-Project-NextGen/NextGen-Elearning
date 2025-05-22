@@ -11,6 +11,14 @@ router.post(
   "/",
   authMiddleware,
   restrictTo("admin", "teacher"),
+  upload.single("image"),
+  MediaController.create
+);
+
+router.patch(
+  "/:id",
+  authMiddleware,
+  restrictTo("admin", "teacher"),
   (req, res, next) => {
     upload.single("image")(req, res, (err) => {
       if (err) {
@@ -20,12 +28,6 @@ router.post(
       next();
     });
   },
-  MediaController.create
-);
-router.patch(
-  "/:id",
-  authMiddleware,
-  restrictTo("admin", "teacher"),
   MediaController.update
 );
 router.delete(
