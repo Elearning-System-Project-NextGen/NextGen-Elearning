@@ -95,12 +95,17 @@ const apiLimiter = rateLimit({
   handler: async (req, res, next, options) => {
     const blockedTokenModel = new BlockedTokens();
     const headers = req.headers["authorization"];
-    const token = headers.split(" ")[1];
+
+    const token = headers?.startsWith("Bearer ") ? headers.split(" ")[1] : null;
+    if (token) {
+      await blockedTokenModel.create({ token });
+    }
 
     await blockedTokenModel.create({ token });
     return res.status(options.statusCode).send(options.message);
   },
 });
+
 app.use("/", apiLimiter);
 
 // Middlewares
