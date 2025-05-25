@@ -71,7 +71,7 @@ const xssCleanMiddleware = (req, res, next) => {
   next();
 };
 
-var whitelist = ["http://localhost:3000", "http://localhost:63343"];
+var whitelist = ["http://localhost:3000", "http://localhost:4000"];
 
 app.use(
   cors({
@@ -95,12 +95,17 @@ const apiLimiter = rateLimit({
   handler: async (req, res, next, options) => {
     const blockedTokenModel = new BlockedTokens();
     const headers = req.headers["authorization"];
-    const token = headers.split(" ")[1];
+
+    const token = headers?.startsWith("Bearer ") ? headers.split(" ")[1] : null;
+    if (token) {
+      await blockedTokenModel.create({ token });
+    }
 
     await blockedTokenModel.create({ token });
     return res.status(options.statusCode).send(options.message);
   },
 });
+
 app.use("/", apiLimiter);
 
 // Middlewares
@@ -149,7 +154,7 @@ mongoose
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(process.env.PORT || 3000, () => {
-      console.log(`Server running on port ${process.env.PORT || 3000}`);
+      console.log(`Server running on port ${process.env.PORT || 4000}`);
     });
   })
   .catch((err) => console.error("MongoDB connection error:", err));
