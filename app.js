@@ -71,7 +71,7 @@ const xssCleanMiddleware = (req, res, next) => {
   next();
 };
 
-var whitelist = ["http://localhost:3000", "http://localhost:63343"];
+var whitelist = ["http://localhost:3000", "http://localhost:4000"];
 
 app.use(
   cors({
@@ -149,7 +149,7 @@ mongoose
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(process.env.PORT || 3000, () => {
-      console.log(`Server running on port ${process.env.PORT || 3000}`);
+      console.log(`Server running on port ${process.env.PORT || 4000}`);
     });
   })
   .catch((err) => console.error("MongoDB connection error:", err));
