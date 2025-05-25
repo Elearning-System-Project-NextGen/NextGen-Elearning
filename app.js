@@ -30,9 +30,12 @@ const addressRoutes = require("./routes/addressRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const blockedTokensRoutes = require("./routes/blockedTokensRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
+const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 const sanitizeHtml = require("sanitize-html");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
+const BlockedTokens = require("./models/BlockedTokens");
 
 const app = express();
 app.use(cookieParser());
@@ -68,8 +71,37 @@ const xssCleanMiddleware = (req, res, next) => {
   next();
 };
 
+var whitelist = ["http://localhost:3000", "http://localhost:63343"];
 
+app.use(
+  cors({
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
 
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
+
+const apiLimiter = rateLimit({
+  max: 100,
+  windowMs: 1000 * 30,
+  message: "Too many request from this Ip, please try again later",
+  handler: async (req, res, next, options) => {
+    const blockedTokenModel = new BlockedTokens();
+    const headers = req.headers["authorization"];
+    const token = headers.split(" ")[1];
+
+    await blockedTokenModel.create({ token });
+    return res.status(options.statusCode).send(options.message);
+  },
+});
+app.use("/", apiLimiter);
 
 // Middlewares
 app.use(i18nextMiddleware.handle(i18next));
