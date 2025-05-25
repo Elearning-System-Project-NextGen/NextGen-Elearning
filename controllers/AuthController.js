@@ -1,12 +1,10 @@
 const path = require("path");
-
 const User = require("../models/User");
 const Role = require("../models/Role");
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
-const i18n = require(path.join(__dirname, "../config/i18n")); 
+const i18n = require(path.join(__dirname, "../config/i18n"));
 const t = i18n.t.bind(i18n);
 require("dotenv").config();
 
@@ -78,12 +76,8 @@ class AuthController {
         return res.status(400).json({ message: t("invalid_credentials") });
       }
 
-      console.log("User.role_id", user.role_id);
-
       const roleModel = new Role();
       const roleDoc = await roleModel.findOne(user.role_id);
-
-      console.log("============> ", roleDoc);
 
       if (!roleDoc) {
         return res.status(400).json({ message: t("role_not_found") });
@@ -103,12 +97,22 @@ class AuthController {
 
       await userModel.update(user._id, { last_login: new Date() });
 
-      res.json({
-        token,
-        email: user.email,
-        username: user.username,
-        name: user.full_name,
-        role: roleDoc.name,
+      //  Set httpOnly cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 2 * 60 * 60 * 1000, // 2 hours
+      });
+
+      res.status(200).json({
+        message: t("login_successful"),
+        user: {
+          email: user.email,
+          username: user.username,
+          name: user.full_name,
+          role: roleDoc.name,
+        },
       });
     } catch (err) {
       res.status(500).json({ error: t("server_error") });
@@ -155,6 +159,13 @@ class AuthController {
 
   static async logout(req, res) {
     try {
+      //  Clear the httpOnly token cookie
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+
       res.status(200).json({ message: t("logout_successful") });
     } catch (err) {
       res.status(500).json({ error: t("server_error") });

@@ -68,6 +68,9 @@ const xssCleanMiddleware = (req, res, next) => {
   next();
 };
 
+
+
+
 // Middlewares
 app.use(i18nextMiddleware.handle(i18next));
 app.use(express.json());
