@@ -85,6 +85,7 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
+    credentials: true,
   })
 );
 
@@ -106,12 +107,14 @@ const apiLimiter = rateLimit({
   },
 });
 
-app.use("/", apiLimiter);
+app.use("/api/", apiLimiter);
 
 // Middlewares
 app.use(i18nextMiddleware.handle(i18next));
 app.use(express.json());
 app.use(xssCleanMiddleware);
+
+
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -153,7 +156,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Connected to MongoDB");
-    app.listen(process.env.PORT || 3000, () => {
+    app.listen(process.env.PORT || 4000, () => {
       console.log(`Server running on port ${process.env.PORT || 4000}`);
     });
   })
