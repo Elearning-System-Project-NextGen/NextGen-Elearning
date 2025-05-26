@@ -6,11 +6,6 @@ const AuthController = require("../controllers/AuthController");
 
 router.post("/register", AuthController.register);
 router.post("/login", AuthController.login);
-router.post(
-  "/logout",
-  authMiddleware,
-  hasPermission("AUTH_LOGOUT"),
-  AuthController.logout
-);
+router.post("/logout", authMiddleware, AuthController.logout);
 
 module.exports = router;

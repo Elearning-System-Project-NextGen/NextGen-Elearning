@@ -36,7 +36,6 @@ const sanitizeHtml = require("sanitize-html");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const BlockedTokens = require("./models/BlockedTokens");
-
 const app = express();
 app.use(cookieParser());
 
@@ -71,38 +70,38 @@ const xssCleanMiddleware = (req, res, next) => {
   next();
 };
 
-var whitelist = ["http://localhost:3000", "http://localhost:4000"];
+var whitelist = [
+  "http://localhost:3000",
+  "http://localhost:4000",
+  "http://localhost:5173",
+  ,"http://localhost:8080",
+];
 
 app.use(
   cors({
-    methods: ["GET", "POST", "PUT", "DELETE"],
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-
-      if (whitelist.indexOf(origin) !== -1) {
+      if (!origin || whitelist.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true,
+    credentials: true, 
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+
 
 const apiLimiter = rateLimit({
   max: 100,
   windowMs: 1000 * 30,
-  message: "Too many request from this Ip, please try again later",
+  message: "Too many requests from this IP, please try again later",
   handler: async (req, res, next, options) => {
-    const blockedTokenModel = new BlockedTokens();
-    const headers = req.headers["authorization"];
-
-    const token = headers?.startsWith("Bearer ") ? headers.split(" ")[1] : null;
+    const token = req.cookies?.token;
     if (token) {
+      const blockedTokenModel = new BlockedTokens();
       await blockedTokenModel.create({ token });
     }
-
-    await blockedTokenModel.create({ token });
     return res.status(options.statusCode).send(options.message);
   },
 });
@@ -113,7 +112,6 @@ app.use("/api/", apiLimiter);
 app.use(i18nextMiddleware.handle(i18next));
 app.use(express.json());
 app.use(xssCleanMiddleware);
-
 
 
 // Routes

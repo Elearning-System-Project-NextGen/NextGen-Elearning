@@ -97,11 +97,10 @@ class AuthController {
 
       await userModel.update(user._id, { last_login: new Date() });
 
-      //  Set httpOnly cookie
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 2 * 60 * 60 * 1000, // 2 hours
       });
 
@@ -115,7 +114,8 @@ class AuthController {
         },
       });
     } catch (err) {
-      res.status(500).json({ error: t("server_error") });
+      console.error("Login error:", err);
+      res.status(500).json({ error: t("server_error"), details: err.message });
     }
   }
 
@@ -153,24 +153,27 @@ class AuthController {
         .status(201)
         .json({ message: t("user_registered_successfully"), user });
     } catch (err) {
-      res.status(500).json({ error: t("server_error") });
+      console.error("Register error:", err);
+      res.status(500).json({ error: t("server_error"), details: err.message });
     }
   }
 
   static async logout(req, res) {
     try {
-      //  Clear the httpOnly token cookie
       res.clearCookie("token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       });
 
       res.status(200).json({ message: t("logout_successful") });
     } catch (err) {
-      res.status(500).json({ error: t("server_error") });
+      console.error("Logout error:", err);
+      res.status(500).json({ error: t("server_error"), details: err.message });
     }
   }
+
+  
 }
 
 module.exports = AuthController;
