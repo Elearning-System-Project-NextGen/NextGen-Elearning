@@ -8,15 +8,17 @@ const sessionSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    role_id: { type: String },
+    permissions: { type: String },
     device_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Device",
-      required: true,
+      //required: true,
     },
     login_time: { type: Date, default: Date.now },
     logout_time: { type: Date },
   },
-  { timestamps: true } // optional, for createdAt / updatedAt
+  { timestamps: true }
 );
 
-module.exports = mongoose.model("Session", sessionSchema);
+module.exports = mongoose.model("Session", sessionSchema); 

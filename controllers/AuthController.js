@@ -1,9 +1,12 @@
 const path = require("path");
 const User = require("../models/User");
 const Role = require("../models/Role");
+const RolePermisssion = require("../models/RolePermission");
+const Session = require("../models/Session");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
+const SessionController = require("./SessionController");
 const i18n = require(path.join(__dirname, "../config/i18n"));
 const t = i18n.t.bind(i18n);
 require("dotenv").config();
@@ -90,6 +93,7 @@ class AuthController {
           username: user.username,
           name: user.full_name,
           role: roleDoc.name,
+          role_id: user.role_id,
         },
         process.env.JWT_SECRET,
         { expiresIn: "2h" }
@@ -104,13 +108,34 @@ class AuthController {
         maxAge: 2 * 60 * 60 * 1000, // 2 hours
       });
 
+      const rolePermissionModel = new RolePermisssion();
+      const permissions = await rolePermissionModel.modelSchema
+        .find({ role_id: user.role_id })
+        .populate("permission_id");
+      const permissionkeys = permissions
+        .map((rp) => rp.permission_id?.permission_key)
+        .filter(Boolean);
+
+      const sessionModel = new Session();
+      await sessionModel.createSession({
+        user_id: user._id,
+        token: token,
+        device_id: req.body.device_id,
+        role_id: user.role_id,
+        permissions: JSON.stringify(permissionkeys),
+        login_time: new Date(),
+      });
+
       res.status(200).json({
         message: t("login_successful"),
+        token,
         user: {
+          id: user._id,
           email: user.email,
           username: user.username,
           name: user.full_name,
           role: roleDoc.name,
+          role_id: user.role_id,
         },
       });
     } catch (err) {
@@ -160,11 +185,15 @@ class AuthController {
 
   static async logout(req, res) {
     try {
+      const token = req.cookies?.token;
+
       res.clearCookie("token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       });
+      const sessionModel = new Session();
+      sessionModel.deleteCurrentSession(token);
 
       res.status(200).json({ message: t("logout_successful") });
     } catch (err) {
@@ -172,8 +201,6 @@ class AuthController {
       res.status(500).json({ error: t("server_error"), details: err.message });
     }
   }
-
-  
 }
 
 module.exports = AuthController;

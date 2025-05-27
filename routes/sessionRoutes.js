@@ -39,4 +39,9 @@ router.delete(
   SessionController.delete
 );
 
+// Custom
+router.get("/current/token", SessionController.current);
+router.delete("/current/token", SessionController.deleteCurrent);
+router.post("/delete-all", SessionController.deleteAll);
+
 module.exports = router;
