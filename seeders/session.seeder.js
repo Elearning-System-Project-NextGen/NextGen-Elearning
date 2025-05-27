@@ -10,7 +10,7 @@
 //     await sessionModel.deleteMany({});
 
 //     const sessions = users.slice(0, 3).map((user) => ({
-//       token: faker.string.uuid(), 
+//       token: faker.string.uuid(),
 //       user_id: user._id,
 //       device_id: faker.helpers.arrayElement(devices)._id,
 //       login_time: faker.date.recent(),
@@ -43,17 +43,17 @@ const seedSessions = async (users, devices) => {
       token: faker.string.uuid(),
       user_id: user._id,
       device_id: faker.helpers.arrayElement(devices)._id,
-      role_id: user.role_id || "user", 
+      role_id: user.role_id || "user",
       permissions: user.permissions || "read:products",
       login_time: faker.date.recent(),
       logout_time: faker.datatype.boolean() ? faker.date.recent() : null,
     }));
 
     const insertedSessions = await sessionModel.insertMany(sessions);
-    console.log(`✅ Inserted ${insertedSessions.length} sessions`);
+    console.log(` Inserted ${insertedSessions.length} sessions`);
     return insertedSessions;
   } catch (error) {
-    console.error("❌ Error seeding sessions:", error);
+    console.error(" Error seeding sessions:", error);
     throw error;
   }
 };
