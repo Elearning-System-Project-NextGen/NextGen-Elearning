@@ -158,8 +158,7 @@ const seedPermissions = async () => {
       "ADDRESS_CREATE",
       "ADDRESS_UPDATE",
       "ADDRESS_DELETE",
-      // Auth
-      "AUTH_LOGOUT",
+      
     ];
 
     const permissionDocs = permissions.map((key) => ({ permission_key: key }));

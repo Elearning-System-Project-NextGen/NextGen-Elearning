@@ -90,7 +90,7 @@ const seedRolePermissions = async (roles, permissions) => {
       "SESSION_VIEW",
       "SESSION_VIEW_DETAIL",
       "REVIEW_VIEW",
-      "AUTH_LOGOUT",
+      
     ];
 
     const studentPermissionKeys = [
@@ -135,7 +135,7 @@ const seedRolePermissions = async (roles, permissions) => {
       "ADDRESS_VIEW_DETAIL",
       "ADDRESS_UPDATE",
       "ADDRESS_DELETE",
-      "AUTH_LOGOUT",
+      
     ];
 
     const rolePermissions = [

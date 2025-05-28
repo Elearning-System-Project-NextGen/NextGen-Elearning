@@ -120,7 +120,7 @@ class AuthController {
       await sessionModel.createSession({
         user_id: user._id,
         token: token,
-        device_id: req.body.device_id,
+        device_id: req.body.device_id || null,
         role_id: user.role_id,
         permissions: JSON.stringify(permissionkeys),
         login_time: new Date(),
@@ -146,15 +146,29 @@ class AuthController {
 
   static async register(req, res) {
     try {
-      const { error, value } = registerSchema.validate(req.body, {
+      const { role, ...dataToValidate } = req.body;
+
+      const { error, value } = registerSchema.validate(dataToValidate, {
         abortEarly: false,
       });
+
       if (error) {
         const errors = error.details.map((err) => ({
           field: err.path.join("."),
           message: err.message,
         }));
         return res.status(400).json({ errors });
+      }
+
+      if (!role) {
+        return res.status(400).json({ message: "Role is required." });
+      }
+
+      const roleModel = new Role();
+      const roleDoc = await roleModel.modelSchema.findOne({ name: role });
+
+      if (!roleDoc) {
+        return res.status(400).json({ message: `Role '${role}' not found.` });
       }
 
       const userModel = new User();
@@ -169,6 +183,7 @@ class AuthController {
       const cleanedBody = {
         ...value,
         password: hashedPassword,
+        role_id: roleDoc._id, 
         registration_date: new Date(),
         status: 1,
       };
