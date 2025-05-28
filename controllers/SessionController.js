@@ -239,7 +239,15 @@ class SessionController {
   // ✅ Get current session by token
   static async current(req, res) {
     try {
-      const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
+      // const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
+
+      const token =
+        req.cookies?.token ||
+        (req.headers.authorization?.startsWith("Bearer ")
+          ? req.headers.authorization.split(" ")[1]
+          : null);
+      //
+
       if (!token) return res.status(400).json({ error: t("token_required") });
 
       const sessionModel = new Session();

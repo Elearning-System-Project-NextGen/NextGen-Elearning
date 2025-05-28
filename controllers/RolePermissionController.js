@@ -115,6 +115,23 @@ class RolePermissionController {
       res.status(500).json({ error: t("server_error") });
     }
   }
+
+  static async getWithRelations(req, res) {
+    console.log("🟢 getWithRelations method reached");
+    try {
+      const rolePermissionModel = new RolePermission();
+      console.log("Model name:", rolePermissionModel.modelSchema.modelName);
+      const result = await rolePermissionModel.modelSchema
+        .find()
+        .populate("role_id", "name")
+        .populate("permission_id", "permission_key");
+
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error in getWithRelations:", error.message, error.stack);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
 }
 
 module.exports = RolePermissionController;

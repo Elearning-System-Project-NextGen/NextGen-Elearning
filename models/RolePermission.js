@@ -27,6 +27,13 @@ class RolePermission extends BaseModel {
       .populate("role_id")
       .exec();
   }
+
+  async findWithRelations() {
+    return this.modelSchema
+      .find()
+      .populate("role_id", "name")
+      .populate("permission_id", "permission_key");
+  }
 }
 
 module.exports = RolePermission;

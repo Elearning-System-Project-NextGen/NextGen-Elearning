@@ -125,7 +125,7 @@ class UserController {
   static async view(req, res) {
     try {
       const userModel = new User();
-      const user = await userModel.findById(req.params.id);
+      const user = await userModel.findOne(req.params.id);
       if (!user) {
         return res.status(404).json({ error: t("user_not_found") });
       }
@@ -192,7 +192,7 @@ class UserController {
 
       if (value.role_id) {
         const roleModel = new Role();
-        const role = await roleModel.findById(value.role_id);
+        const role = await roleModel.findOne(value.role_id);
         if (!role) {
           return res.status(400).json({ error: t("role_not_found") });
         }

@@ -36,6 +36,7 @@ const sanitizeHtml = require("sanitize-html");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const BlockedTokens = require("./models/BlockedTokens");
+const userRoutes = require("./routes/userRoutes");
 const app = express();
 app.use(cookieParser());
 
@@ -74,7 +75,6 @@ var whitelist = [
   "http://localhost:3000",
   "http://localhost:4000",
   "http://localhost:5173",
-  ,"http://localhost:8080",
 ];
 
 app.use(
@@ -86,11 +86,10 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, 
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );
-
 
 const apiLimiter = rateLimit({
   max: 100,
@@ -112,7 +111,6 @@ app.use("/api/", apiLimiter);
 app.use(i18nextMiddleware.handle(i18next));
 app.use(express.json());
 app.use(xssCleanMiddleware);
-
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -142,6 +140,7 @@ app.use("/api/addresses", addressRoutes);
 app.use("/api/media", mediaRoutes);
 app.use("/api/blocked-tokens", blockedTokensRoutes);
 app.use("/api/subjects", subjectRoutes);
+app.use("/api/users", userRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

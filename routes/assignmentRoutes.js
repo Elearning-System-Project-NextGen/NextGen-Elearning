@@ -8,34 +8,34 @@ const restrictTo = require("../middleware/roleMiddleware");
 router.get(
   "/",
   authMiddleware,
-  hasPermission("ASSIGNMENT_VIEW"),
+  hasPermission("SUBJECT_VIEW"), // ASSIGNMENT_VIEW
   AssignmentController.index
 );
 router.get(
   "/:id",
   authMiddleware,
-  hasPermission("ASSIGNMENT_VIEW_DETAIL"),
+  hasPermission("SUBJECT_VIEW_DETAIL"), // ASSIGNMENT_VIEW_DETAIL
   AssignmentController.view
 );
 router.post(
   "/",
   authMiddleware,
   restrictTo("admin", "teacher"),
-  hasPermission("ASSIGNMENT_CREATE"),
+  hasPermission("SUBJECT_CREATE"), //SUBJECT_CREATE ASSIGNMENT_CREATE
   AssignmentController.create
 );
 router.patch(
   "/:id",
   authMiddleware,
   restrictTo("admin", "teacher"),
-  hasPermission("ASSIGNMENT_UPDATE"),
+  hasPermission("SUBJECT_UPDATE"), // ASSIGNMENT_UPDATE
   AssignmentController.update
 );
 router.delete(
   "/:id",
   authMiddleware,
   restrictTo("admin", "teacher"),
-  hasPermission("ASSIGNMENT_DELETE"),
+  hasPermission("SUBJECT_DELETE"), //ASSIGNMENT_DELETE
   AssignmentController.delete
 );
 

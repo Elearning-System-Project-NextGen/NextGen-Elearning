@@ -12,6 +12,12 @@ router.get(
   hasPermission("ROLEPERMISSION_VIEW"),
   RolePermissionController.index
 );
+
+router.get("/test", (req, res) => {
+  console.log("✅ Test route hit");
+  res.send("It works!");
+});
+
 router.get(
   "/:id",
   authMiddleware,
@@ -19,6 +25,15 @@ router.get(
   hasPermission("ROLEPERMISSION_VIEW_DETAIL"),
   RolePermissionController.view
 );
+
+router.get(
+  "/with-relations",
+  authMiddleware,
+  restrictTo("admin"),
+  hasPermission("ROLEPERMISSION_VIEW"),
+  RolePermissionController.getWithRelations
+);
+
 router.post(
   "/",
   authMiddleware,
