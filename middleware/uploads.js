@@ -10,7 +10,7 @@ if (!fs.existsSync(dirPath)) {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, dirPath);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
@@ -20,11 +20,29 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowedMimeTypes = ["image/jpeg", "image/png"];
+  const allowedMimeTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "video/mp4",
+    "video/quicktime", // .mov
+    "video/x-msvideo", // .avi
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+    "application/zip",
+    "application/x-zip-compressed",
+  ];
+
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Only .jpeg and .png files are allowed"), false);
+    cb(
+      new Error(
+        "Only specific image, video, or document file types are allowed."
+      ),
+      false
+    );
   }
 };
 
