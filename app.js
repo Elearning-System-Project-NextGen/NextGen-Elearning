@@ -37,6 +37,8 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const BlockedTokens = require("./models/BlockedTokens");
 const userRoutes = require("./routes/userRoutes");
+const axios = require("axios"); // Add axios for Gemini API calls
+
 const app = express();
 app.use(cookieParser());
 
@@ -141,6 +143,42 @@ app.use("/api/media", mediaRoutes);
 app.use("/api/blocked-tokens", blockedTokensRoutes);
 app.use("/api/subjects", subjectRoutes);
 app.use("/api/users", userRoutes);
+
+// New Gemini API route
+app.post("/api/gemini", async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || typeof text !== "string") {
+      return res.status(400).json({ error: req.t("invalid_input") });
+    }
+
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [
+          {
+            parts: [
+              {
+                text: text,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const aiText = response.data.candidates[0].content.parts[0].text;
+    res.json({ response: aiText });
+  } catch (error) {
+    console.error("Error calling Gemini API:", error);
+    res.status(500).json({ error: req.t("server_error") });
+  }
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
