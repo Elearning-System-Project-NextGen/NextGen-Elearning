@@ -78,6 +78,7 @@ var whitelist = [
   "http://localhost:4000",
   "http://localhost:5173",
   "http://localhost:5174",
+  "https://e-learning-mdkh.netlify.app",
 ];
 //
 app.use(

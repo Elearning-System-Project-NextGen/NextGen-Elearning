@@ -27,7 +27,7 @@ router.post(
 router.patch(
   "/:id",
   authMiddleware,
-  restrictTo("admin", "teacher"),
+  restrictTo("admin"),
   hasPermission("TEACHER_UPDATE"),
   TeacherController.update
 );

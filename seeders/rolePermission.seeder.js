@@ -50,12 +50,12 @@ const seedRolePermissions = async (roles, permissions) => {
       "CERTIFICATE_VIEW_DETAIL",
       "CERTIFICATE_CREATE",
       "CERTIFICATE_UPDATE",
-      "CERTIFICATE_DELETE",
+
       "LIVESESSION_VIEW",
       "LIVESESSION_VIEW_DETAIL",
       "LIVESESSION_CREATE",
       "LIVESESSION_UPDATE",
-      "LIVESESSION_DELETE",
+
       "ATTENDANCE_VIEW",
       "ATTENDANCE_VIEW_DETAIL",
       "ATTENDANCE_CREATE",
