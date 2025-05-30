@@ -26,7 +26,7 @@ const studentSchema = Joi.object({
   referral_code: Joi.string().alphanum().max(20).optional(),
 
   // embedded user info
-  full_name: Joi.string().max(100).required(),
+  full_name: Joi.string().max(100),
   username: Joi.string().min(3).max(30).optional(),
   email: Joi.string().email().optional(),
   password: Joi.string().min(6).max(100).optional(),

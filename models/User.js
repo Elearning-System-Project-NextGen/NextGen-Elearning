@@ -13,6 +13,10 @@ class User extends BaseModel {
   async deleteMany(conditions = {}) {
     return this.modelSchema.deleteMany(conditions).exec();
   }
+
+  async getAll() {
+    return this.modelSchema.find().populate("user_id", "full_name");
+  }
 }
 
 module.exports = User;

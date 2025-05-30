@@ -111,10 +111,12 @@ const updateUserSchema = Joi.object({
 });
 
 class UserController {
+  
   static async index(req, res) {
     try {
       const userModel = new User();
       const users = await userModel.getAll();
+
       res.status(200).json(users);
     } catch (error) {
       console.error("Index users error:", error);
