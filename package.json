@@ -4,9 +4,8 @@
   "description": "Backend for e-learning system",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
     "test": "mocha tests/*.test.js --exit",
-    "seed": "node seeders/index.js",
+    "start": "node seeders/index.js",
     "dev": "nodemon app.js"
   },
   "dependencies": {
