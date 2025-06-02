@@ -8,7 +8,7 @@ Install dependencies: npm install
 Create .env file:MONGO_URI=mongodb://localhost:27017/elearning
 JWT_SECRET=your-secure-secret-key
 NODE_ENV=development
-PORT=3000
+PORT=4000
 
 
 Run seeders: npm run seed
