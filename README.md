@@ -40,9 +40,4 @@ schemas/: Joi validation schemas.
 socket/: WebSocket setup.
 locales/: Translation files.
 
-Notes
-
-Ensure MongoDB is running before starting the server.
-Use a secure JWT_SECRET in production.
-Deploy on platforms like Heroku or AWS.
 
